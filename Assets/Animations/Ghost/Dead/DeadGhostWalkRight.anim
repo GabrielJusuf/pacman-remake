@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Animation
+  m_Name: DeadGhostWalkRight
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,11 +21,11 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -8687541318528753418, guid: f7465ac9117374bab946de13ecf4d269, type: 3}
+      value: {fileID: -9067585261831831809, guid: ee7f024a37ebf42c5b8d4932020a5f5a, type: 3}
     - time: 0.5
-      value: {fileID: -3579963017198581549, guid: f7465ac9117374bab946de13ecf4d269, type: 3}
+      value: {fileID: -2823184400852656199, guid: ee7f024a37ebf42c5b8d4932020a5f5a, type: 3}
     - time: 0.9166667
-      value: {fileID: -3579963017198581549, guid: f7465ac9117374bab946de13ecf4d269, type: 3}
+      value: {fileID: -2823184400852656199, guid: ee7f024a37ebf42c5b8d4932020a5f5a, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -48,9 +48,9 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -8687541318528753418, guid: f7465ac9117374bab946de13ecf4d269, type: 3}
-    - {fileID: -3579963017198581549, guid: f7465ac9117374bab946de13ecf4d269, type: 3}
-    - {fileID: -3579963017198581549, guid: f7465ac9117374bab946de13ecf4d269, type: 3}
+    - {fileID: -9067585261831831809, guid: ee7f024a37ebf42c5b8d4932020a5f5a, type: 3}
+    - {fileID: -2823184400852656199, guid: ee7f024a37ebf42c5b8d4932020a5f5a, type: 3}
+    - {fileID: -2823184400852656199, guid: ee7f024a37ebf42c5b8d4932020a5f5a, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
