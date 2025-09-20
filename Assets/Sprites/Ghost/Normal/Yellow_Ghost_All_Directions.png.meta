@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: 43bae1d0a837a4fe3afeafedcb876e72
+guid: 365d81414afe44ab18c6f60976a4f920
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4958322599366888917
-    second: Green_Ghost_All_Directions_0
+      213: 7200356846444565388
+    second: Yellow_Ghost_All_Directions_0
   - first:
-      213: -4004564617709458553
-    second: Green_Ghost_All_Directions_1
+      213: -5061758175614960088
+    second: Yellow_Ghost_All_Directions_1
   - first:
-      213: 7231573124657416877
-    second: Green_Ghost_All_Directions_2
+      213: 8795247951214516984
+    second: Yellow_Ghost_All_Directions_2
   - first:
-      213: 1002900517027401595
-    second: Green_Ghost_All_Directions_3
+      213: -7161723122037071056
+    second: Yellow_Ghost_All_Directions_3
   - first:
-      213: -5092722834523422316
-    second: Green_Ghost_All_Directions_4
+      213: -8664973273584590697
+    second: Yellow_Ghost_All_Directions_4
   - first:
-      213: -9207125904567590223
-    second: Green_Ghost_All_Directions_5
+      213: 6914310909592009497
+    second: Yellow_Ghost_All_Directions_5
   - first:
-      213: 1050368935957045476
-    second: Green_Ghost_All_Directions_6
+      213: 3205698271379955568
+    second: Yellow_Ghost_All_Directions_6
   - first:
-      213: 3177021307613685721
-    second: Green_Ghost_All_Directions_7
+      213: 7355325540726226268
+    second: Yellow_Ghost_All_Directions_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -121,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_0
+      name: Yellow_Ghost_All_Directions_0
       rect:
         serializedVersion: 2
         x: 6
-        y: 96
+        y: 100
         width: 19
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,14 +135,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5dd0e0142208fc440800000000000000
-      internalID: 4958322599366888917
+      spriteID: c835168176ecce360800000000000000
+      internalID: 7200356846444565388
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_1
+      name: Yellow_Ghost_All_Directions_1
       rect:
         serializedVersion: 2
         x: 38
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 78b645182bdec68c0800000000000000
-      internalID: -4004564617709458553
+      spriteID: 82e7a83f1c501c9b0800000000000000
+      internalID: -5061758175614960088
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_2
+      name: Yellow_Ghost_All_Directions_2
       rect:
         serializedVersion: 2
         x: 7
-        y: 64
+        y: 68
         width: 19
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -177,14 +177,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: daa877e3175bb5460800000000000000
-      internalID: 7231573124657416877
+      spriteID: 8fa9f93996ffe0a70800000000000000
+      internalID: 8795247951214516984
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_3
+      name: Yellow_Ghost_All_Directions_3
       rect:
         serializedVersion: 2
         x: 39
@@ -198,20 +198,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b7f4976e4b40bed00800000000000000
-      internalID: 1002900517027401595
+      spriteID: 0336743d3c27c9c90800000000000000
+      internalID: -7161723122037071056
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_4
+      name: Yellow_Ghost_All_Directions_4
       rect:
         serializedVersion: 2
         x: 7
-        y: 32
+        y: 36
         width: 18
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -219,14 +219,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 49106bc70930359b0800000000000000
-      internalID: -5092722834523422316
+      spriteID: 790acb777b4dfb780800000000000000
+      internalID: -8664973273584590697
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_5
+      name: Yellow_Ghost_All_Directions_5
       rect:
         serializedVersion: 2
         x: 39
@@ -240,20 +240,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b2a3ff65c7b93080800000000000000
-      internalID: -9207125904567590223
+      spriteID: 91bf6d0832194ff50800000000000000
+      internalID: 6914310909592009497
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_6
+      name: Yellow_Ghost_All_Directions_6
       rect:
         serializedVersion: 2
         x: 7
-        y: 2
+        y: 6
         width: 18
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -261,14 +261,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e023de6bf8a39e00800000000000000
-      internalID: 1050368935957045476
+      spriteID: 07f9fa2e79dec7c20800000000000000
+      internalID: 3205698271379955568
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Green_Ghost_All_Directions_7
+      name: Yellow_Ghost_All_Directions_7
       rect:
         serializedVersion: 2
         x: 39
@@ -282,8 +282,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9d72924fb0c071c20800000000000000
-      internalID: 3177021307613685721
+      spriteID: c5d385eeb9d531660800000000000000
+      internalID: 7355325540726226268
       vertices: []
       indices: 
       edges: []
@@ -299,14 +299,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Green_Ghost_All_Directions_0: 4958322599366888917
-      Green_Ghost_All_Directions_1: -4004564617709458553
-      Green_Ghost_All_Directions_2: 7231573124657416877
-      Green_Ghost_All_Directions_3: 1002900517027401595
-      Green_Ghost_All_Directions_4: -5092722834523422316
-      Green_Ghost_All_Directions_5: -9207125904567590223
-      Green_Ghost_All_Directions_6: 1050368935957045476
-      Green_Ghost_All_Directions_7: 3177021307613685721
+      Yellow_Ghost_All_Directions_0: 7200356846444565388
+      Yellow_Ghost_All_Directions_1: -5061758175614960088
+      Yellow_Ghost_All_Directions_2: 8795247951214516984
+      Yellow_Ghost_All_Directions_3: -7161723122037071056
+      Yellow_Ghost_All_Directions_4: -8664973273584590697
+      Yellow_Ghost_All_Directions_5: 6914310909592009497
+      Yellow_Ghost_All_Directions_6: 3205698271379955568
+      Yellow_Ghost_All_Directions_7: 7355325540726226268
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

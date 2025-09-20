@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: a46356e99099449e1943a441a30e4f6b
+guid: ee7f024a37ebf42c5b8d4932020a5f5a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7090793175068611054
-    second: Recovery_Ghost_All_Directions_0
+      213: -2823184400852656199
+    second: Dead_Ghost_All_Directions_0
   - first:
-      213: 486755904160288447
-    second: Recovery_Ghost_All_Directions_1
+      213: -9067585261831831809
+    second: Dead_Ghost_All_Directions_1
   - first:
-      213: 7496319037570497078
-    second: Recovery_Ghost_All_Directions_2
+      213: 4294542923813007072
+    second: Dead_Ghost_All_Directions_2
   - first:
-      213: -2416263291926192829
-    second: Recovery_Ghost_All_Directions_3
+      213: -1339115436368461029
+    second: Dead_Ghost_All_Directions_3
   - first:
-      213: -947878587238684519
-    second: Recovery_Ghost_All_Directions_4
+      213: 6844502251044208441
+    second: Dead_Ghost_All_Directions_4
   - first:
-      213: -3825161253185980792
-    second: Recovery_Ghost_All_Directions_5
+      213: -6530096612655146264
+    second: Dead_Ghost_All_Directions_5
   - first:
-      213: -3361822769422824631
-    second: Recovery_Ghost_All_Directions_6
+      213: -7107204129601685949
+    second: Dead_Ghost_All_Directions_6
   - first:
-      213: 1632299891587394059
-    second: Recovery_Ghost_All_Directions_7
+      213: -1917229380798152263
+    second: Dead_Ghost_All_Directions_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -121,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_0
+      name: Dead_Ghost_All_Directions_0
       rect:
         serializedVersion: 2
         x: 6
-        y: 96
+        y: 100
         width: 19
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,14 +135,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 21e65480d21789d90800000000000000
-      internalID: -7090793175068611054
+      spriteID: 9bfd0cbceb802d8d0800000000000000
+      internalID: -2823184400852656199
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_1
+      name: Dead_Ghost_All_Directions_1
       rect:
         serializedVersion: 2
         x: 38
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fbe4cc77aed41c600800000000000000
-      internalID: 486755904160288447
+      spriteID: ffe32f91f37792280800000000000000
+      internalID: -9067585261831831809
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_2
+      name: Dead_Ghost_All_Directions_2
       rect:
         serializedVersion: 2
         x: 7
-        y: 64
+        y: 68
         width: 19
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -177,17 +177,17 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 63a336d8276480860800000000000000
-      internalID: 7496319037570497078
+      spriteID: 0eeaa862908499b30800000000000000
+      internalID: 4294542923813007072
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_3
+      name: Dead_Ghost_All_Directions_3
       rect:
         serializedVersion: 2
-        x: 38
+        x: 39
         y: 66
         width: 19
         height: 29
@@ -198,20 +198,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 34d5ce08655b77ed0800000000000000
-      internalID: -2416263291926192829
+      spriteID: b1304060b918a6de0800000000000000
+      internalID: -1339115436368461029
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_4
+      name: Dead_Ghost_All_Directions_4
       rect:
         serializedVersion: 2
         x: 7
-        y: 32
+        y: 36
         width: 18
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -219,14 +219,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 998607d627578d2f0800000000000000
-      internalID: -947878587238684519
+      spriteID: 93ff9d9988e8cfe50800000000000000
+      internalID: 6844502251044208441
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_5
+      name: Dead_Ghost_All_Directions_5
       rect:
         serializedVersion: 2
         x: 39
@@ -240,20 +240,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 886f2475b1c4aeac0800000000000000
-      internalID: -3825161253185980792
+      spriteID: 8ea55bd8abf6065a0800000000000000
+      internalID: -6530096612655146264
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_6
+      name: Dead_Ghost_All_Directions_6
       rect:
         serializedVersion: 2
         x: 7
-        y: 2
+        y: 6
         width: 18
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -261,14 +261,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 94b8bbeb0086851d0800000000000000
-      internalID: -3361822769422824631
+      spriteID: 346f6ecef732e5d90800000000000000
+      internalID: -7107204129601685949
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Recovery_Ghost_All_Directions_7
+      name: Dead_Ghost_All_Directions_7
       rect:
         serializedVersion: 2
         x: 39
@@ -282,8 +282,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b0aa9f46a1817a610800000000000000
-      internalID: 1632299891587394059
+      spriteID: 9b1859c3902a465e0800000000000000
+      internalID: -1917229380798152263
       vertices: []
       indices: 
       edges: []
@@ -299,14 +299,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Recovery_Ghost_All_Directions_0: -7090793175068611054
-      Recovery_Ghost_All_Directions_1: 486755904160288447
-      Recovery_Ghost_All_Directions_2: 7496319037570497078
-      Recovery_Ghost_All_Directions_3: -2416263291926192829
-      Recovery_Ghost_All_Directions_4: -947878587238684519
-      Recovery_Ghost_All_Directions_5: -3825161253185980792
-      Recovery_Ghost_All_Directions_6: -3361822769422824631
-      Recovery_Ghost_All_Directions_7: 1632299891587394059
+      Dead_Ghost_All_Directions_0: -2823184400852656199
+      Dead_Ghost_All_Directions_1: -9067585261831831809
+      Dead_Ghost_All_Directions_2: 4294542923813007072
+      Dead_Ghost_All_Directions_3: -1339115436368461029
+      Dead_Ghost_All_Directions_4: 6844502251044208441
+      Dead_Ghost_All_Directions_5: -6530096612655146264
+      Dead_Ghost_All_Directions_6: -7107204129601685949
+      Dead_Ghost_All_Directions_7: -1917229380798152263
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: 6a14c699a2d5c41e0afdf24b1eab587c
+guid: ac13199800b094a1eacb975f6c639707
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7564650377627993875
-    second: Scared_Ghost_All_Directions_0
+      213: -8687541318528753418
+    second: Blue_Ghost_All_Directions_0
   - first:
-      213: -540118816300039083
-    second: Scared_Ghost_All_Directions_1
+      213: -3579963017198581549
+    second: Blue_Ghost_All_Directions_1
   - first:
-      213: 8852373175314448265
-    second: Scared_Ghost_All_Directions_2
+      213: -1615700455535155188
+    second: Blue_Ghost_All_Directions_2
   - first:
-      213: 523550948868157754
-    second: Scared_Ghost_All_Directions_3
+      213: 1604586400821313840
+    second: Blue_Ghost_All_Directions_3
   - first:
-      213: 569543522482058975
-    second: Scared_Ghost_All_Directions_4
+      213: 6831689707659252998
+    second: Blue_Ghost_All_Directions_4
   - first:
-      213: 8391459833094602963
-    second: Scared_Ghost_All_Directions_5
+      213: -5369117089784217544
+    second: Blue_Ghost_All_Directions_5
   - first:
-      213: 4917115294719223872
-    second: Scared_Ghost_All_Directions_6
+      213: -6627626665359732768
+    second: Blue_Ghost_All_Directions_6
   - first:
-      213: -1023147492044732652
-    second: Scared_Ghost_All_Directions_7
+      213: -7113973652857761253
+    second: Blue_Ghost_All_Directions_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -121,13 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_0
+      name: Blue_Ghost_All_Directions_0
       rect:
         serializedVersion: 2
         x: 6
-        y: 96
+        y: 100
         width: 19
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,14 +135,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3178a8070790bf860800000000000000
-      internalID: 7564650377627993875
+      spriteID: 6f0a0990337af6780800000000000000
+      internalID: -8687541318528753418
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_1
+      name: Blue_Ghost_All_Directions_1
       rect:
         serializedVersion: 2
         x: 38
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5548ee95ccc1188f0800000000000000
-      internalID: -540118816300039083
+      spriteID: 3d8c7d27a9a615ec0800000000000000
+      internalID: -3579963017198581549
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_2
+      name: Blue_Ghost_All_Directions_2
       rect:
         serializedVersion: 2
         x: 7
-        y: 64
+        y: 68
         width: 19
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -177,14 +177,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 98f70d54082f9da70800000000000000
-      internalID: 8852373175314448265
+      spriteID: c08e36cfef0e399e0800000000000000
+      internalID: -1615700455535155188
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_3
+      name: Blue_Ghost_All_Directions_3
       rect:
         serializedVersion: 2
         x: 39
@@ -198,20 +198,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a31fa1960d6044700800000000000000
-      internalID: 523550948868157754
+      spriteID: 031806084d2a44610800000000000000
+      internalID: 1604586400821313840
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_4
+      name: Blue_Ghost_All_Directions_4
       rect:
         serializedVersion: 2
         x: 7
-        y: 32
+        y: 36
         width: 18
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -219,14 +219,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fd6faade0dc67e700800000000000000
-      internalID: 569543522482058975
+      spriteID: 605d8b0e7990fce50800000000000000
+      internalID: 6831689707659252998
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_5
+      name: Blue_Ghost_All_Directions_5
       rect:
         serializedVersion: 2
         x: 39
@@ -240,20 +240,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3d000922244747470800000000000000
-      internalID: 8391459833094602963
+      spriteID: 830cee124701d75b0800000000000000
+      internalID: -5369117089784217544
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_6
+      name: Blue_Ghost_All_Directions_6
       rect:
         serializedVersion: 2
         x: 7
-        y: 2
+        y: 6
         width: 18
-        height: 29
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -261,14 +261,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 048216dfe4a1d3440800000000000000
-      internalID: 4917115294719223872
+      spriteID: 0ef835b99a0f504a0800000000000000
+      internalID: -6627626665359732768
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Scared_Ghost_All_Directions_7
+      name: Blue_Ghost_All_Directions_7
       rect:
         serializedVersion: 2
         x: 39
@@ -282,8 +282,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 41787dfd6cc0dc1f0800000000000000
-      internalID: -1023147492044732652
+      spriteID: b12dce777a6164d90800000000000000
+      internalID: -7113973652857761253
       vertices: []
       indices: 
       edges: []
@@ -299,14 +299,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Scared_Ghost_All_Directions_0: 7564650377627993875
-      Scared_Ghost_All_Directions_1: -540118816300039083
-      Scared_Ghost_All_Directions_2: 8852373175314448265
-      Scared_Ghost_All_Directions_3: 523550948868157754
-      Scared_Ghost_All_Directions_4: 569543522482058975
-      Scared_Ghost_All_Directions_5: 8391459833094602963
-      Scared_Ghost_All_Directions_6: 4917115294719223872
-      Scared_Ghost_All_Directions_7: -1023147492044732652
+      Blue_Ghost_All_Directions_0: -8687541318528753418
+      Blue_Ghost_All_Directions_1: -3579963017198581549
+      Blue_Ghost_All_Directions_2: -1615700455535155188
+      Blue_Ghost_All_Directions_3: 1604586400821313840
+      Blue_Ghost_All_Directions_4: 6831689707659252998
+      Blue_Ghost_All_Directions_5: -5369117089784217544
+      Blue_Ghost_All_Directions_6: -6627626665359732768
+      Blue_Ghost_All_Directions_7: -7113973652857761253
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
