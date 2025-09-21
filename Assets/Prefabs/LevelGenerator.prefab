@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5836491344274910589
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1946163268323255658}
+  - component: {fileID: 4650275806494743132}
+  m_Layer: 0
+  m_Name: LevelGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1946163268323255658
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5836491344274910589}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4650275806494743132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5836491344274910589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1738def73d44f388132c81ddaef885, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  empty: {fileID: 946220486623687992, guid: c367b1490d46943b9a5c6fc5aec67e9f, type: 3}
+  outsideCorner: {fileID: 7222519225387737571, guid: 5b50ee39f22ca40d69cbc2b5c41d0cb5, type: 3}
+  outsideWall: {fileID: 5395219471716537906, guid: 69390e6ae7b3041c48bba365e3eb4a3e, type: 3}
+  insideCorner: {fileID: 5312991685618666783, guid: 3cd373df490184d9c9d8f711cce30b87, type: 3}
+  insideWall: {fileID: 5841571804702681376, guid: 7297c5a654f624192919d3d24965c2a9, type: 3}
+  standardPellet: {fileID: 3171119745675992141, guid: c5bb48a918ea04d3a8e901e9c04ee46b, type: 3}
+  powerPellet: {fileID: 4111864894457179872, guid: 8f48dd13f619e4cf08549b5ab7eff15c, type: 3}
+  tJunction: {fileID: 1245957613345836460, guid: f70fe68421f124edfb949339088c6207, type: 3}
+  ghostExit: {fileID: 2791424204596139395, guid: 260b91d25afa24debbf4864721cc1ada, type: 3}
