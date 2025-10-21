@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 7b3376b449f264ffe80471e1e06b9be0
+guid: 10353db1f53544312b3bcc21ef504b87
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3621747777539418590
-    second: map(2)_0
+      213: 1425797027437755354
+    second: Power-Pellet-Resized_0
+  - first:
+      213: -8892278962250451972
+    second: Power-Pellet-Resized_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,22 +103,43 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: map(2)_0
+      name: Power-Pellet-Resized_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 384
-        height: 384
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 128, y: 128, z: 128, w: 128}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ed92c423a68034230800000000000000
-      internalID: 3621747777539418590
+      spriteID: adb3c3e97d279c310800000000000000
+      internalID: 1425797027437755354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Power-Pellet-Resized_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf3f16ba567489480800000000000000
+      internalID: -8892278962250451972
       vertices: []
       indices: 
       edges: []
@@ -123,7 +147,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: c0969807ad7514ed1ae4d3e39b1c3ae8
+    spriteID: ceb2ceab0101749cb9c939e41f134864
     internalID: 0
     vertices: []
     indices: 
@@ -131,7 +155,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      map(2)_0: 3621747777539418590
+      Power-Pellet-Resized_0: 1425797027437755354
+      Power-Pellet-Resized_1: -8892278962250451972
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
