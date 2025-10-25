@@ -42,6 +42,9 @@ public class PacStudentController : MonoBehaviour
     private bool isPlayingPelletAudio = false;
     private bool hasPlayedMidpointAudio = false;
     
+    // Last facing direction for idle state
+    private Vector2Int lastFacingDirection = Vector2Int.right;
+    
     // Reference to Tweener for movement
     private Tweener tweener;
     
@@ -82,7 +85,7 @@ public class PacStudentController : MonoBehaviour
         // Set initial animation direction to face right
         if (animator != null)
         {
-            SetAnimationDirection(Vector2Int.right);
+            SetIdleDirection(Vector2Int.right);
         }
     }
 
@@ -342,6 +345,9 @@ public class PacStudentController : MonoBehaviour
     {
         if (animator == null) return;
         
+        // Update last facing direction
+        lastFacingDirection = direction;
+        
         // Set direction booleans for animation
         animator.SetBool("IsMovingUp", direction == Vector2Int.down);
         animator.SetBool("IsMovingDown", direction == Vector2Int.up);
@@ -355,12 +361,26 @@ public class PacStudentController : MonoBehaviour
         {
             animator.SetBool("IsMoving", false);
             
-            // Reset all direction booleans
-            animator.SetBool("IsMovingUp", false);
-            animator.SetBool("IsMovingDown", false);
-            animator.SetBool("IsMovingLeft", false);
-            animator.SetBool("IsMovingRight", false);
+            // Set idle state based on last facing direction
+            SetIdleDirection(lastFacingDirection);
         }
+    }
+    
+    private void SetIdleDirection(Vector2Int direction)
+    {
+        if (animator == null) return;
+        
+        // Reset all movement booleans
+        animator.SetBool("IsMovingUp", false);
+        animator.SetBool("IsMovingDown", false);
+        animator.SetBool("IsMovingLeft", false);
+        animator.SetBool("IsMovingRight", false);
+        
+        // Set idle direction booleans (you'll need to add these to your animator)
+        animator.SetBool("IsIdleUp", direction == Vector2Int.down);
+        animator.SetBool("IsIdleDown", direction == Vector2Int.up);
+        animator.SetBool("IsIdleLeft", direction == Vector2Int.left);
+        animator.SetBool("IsIdleRight", direction == Vector2Int.right);
     }
     
     private void StartMovementAudio(bool hasPellet)
