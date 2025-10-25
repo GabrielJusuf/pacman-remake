@@ -229,5 +229,36 @@ public class LevelGenerator : MonoBehaviour
         if (row < 0 || col < 0 || row >= map.GetLength(0) || col >= map.GetLength(1)) return 0;
         return map[row, col];
     }
+    
+    // Public method to check if a grid position is walkable
+    public bool IsWalkable(int gridX, int gridY)
+    {
+        if (full == null) return false;
+        
+        // Check bounds
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+        
+        int tileType = full[gridY, gridX];
+        
+        // Walkable tiles: empty (0), standardPellet (5), powerPellet (6)
+        // Non-walkable tiles: walls (1,2,3,4,7,8)
+        return tileType == 0 || tileType == 5 || tileType == 6;
+    }
+    
+    // Public method to check if a grid position has a pellet
+    public bool HasPellet(int gridX, int gridY)
+    {
+        if (full == null) return false;
+        
+        // Check bounds
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+        
+        int tileType = full[gridY, gridX];
+        
+        // Pellet tiles: standardPellet (5), powerPellet (6)
+        return tileType == 5 || tileType == 6;
+    }
 
 }
