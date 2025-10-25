@@ -43,7 +43,10 @@ public class PacStudentController : MonoBehaviour
     private bool hasPlayedMidpointAudio = false;
     
     // Last facing direction for idle state
-    private Vector2Int lastFacingDirection = Vector2Int.right;
+    private Vector2Int lastFacingDirection = Vector2Int.zero;
+    
+    // Animation state tracking
+    private Vector2Int currentAnimationDirection = Vector2Int.zero;
     
     // Reference to Tweener for movement
     private Tweener tweener;
@@ -85,6 +88,8 @@ public class PacStudentController : MonoBehaviour
         // Set initial animation direction to face right
         if (animator != null)
         {
+            // Ensure we start in idle state, not moving
+            animator.SetBool("IsMoving", false);
             SetIdleDirection(Vector2Int.right);
         }
     }
@@ -225,7 +230,6 @@ public class PacStudentController : MonoBehaviour
     
     private Vector3 GridToWorldPosition(Vector2Int gridPos)
     {
-        // Use the same calculation as LevelGenerator.GridToWorldCentered
         float cx = (gridWidth - 1) * 0.5f;
         float cy = (gridHeight - 1) * 0.5f;
         
@@ -334,32 +338,39 @@ public class PacStudentController : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetBool("IsMoving", true);
+            Vector2Int direction = currentInput;
             
-            // Set direction parameters for animation
-            SetAnimationDirection(currentInput);
+            // Reset all direction booleans first
+            animator.SetBool("IsMovingUp", false);
+            animator.SetBool("IsMovingDown", false);
+            animator.SetBool("IsMovingLeft", false);
+            animator.SetBool("IsMovingRight", false);
+            
+            // Set the correct direction
+            animator.SetBool("IsMovingUp", direction == Vector2Int.down);
+            animator.SetBool("IsMovingDown", direction == Vector2Int.up);
+            animator.SetBool("IsMovingLeft", direction == Vector2Int.left);
+            animator.SetBool("IsMovingRight", direction == Vector2Int.right);
+            
+            // Set moving state
+            animator.SetBool("IsMoving", true);
         }
     }
     
-    private void SetAnimationDirection(Vector2Int direction)
-    {
-        if (animator == null) return;
-        
-        // Update last facing direction
-        lastFacingDirection = direction;
-        
-        // Set direction booleans for animation
-        animator.SetBool("IsMovingUp", direction == Vector2Int.down);
-        animator.SetBool("IsMovingDown", direction == Vector2Int.up);
-        animator.SetBool("IsMovingLeft", direction == Vector2Int.left);
-        animator.SetBool("IsMovingRight", direction == Vector2Int.right);
-    }
+    
     
     private void StopMovementAnimation()
     {
         if (animator != null)
         {
+            // Stop movement
             animator.SetBool("IsMoving", false);
+            
+            // Reset all movement direction booleans
+            animator.SetBool("IsMovingUp", false);
+            animator.SetBool("IsMovingDown", false);
+            animator.SetBool("IsMovingLeft", false);
+            animator.SetBool("IsMovingRight", false);
             
             // Set idle state based on last facing direction
             SetIdleDirection(lastFacingDirection);
@@ -376,7 +387,7 @@ public class PacStudentController : MonoBehaviour
         animator.SetBool("IsMovingLeft", false);
         animator.SetBool("IsMovingRight", false);
         
-        // Set idle direction booleans (you'll need to add these to your animator)
+        // Set idle direction booleans
         animator.SetBool("IsIdleUp", direction == Vector2Int.down);
         animator.SetBool("IsIdleDown", direction == Vector2Int.up);
         animator.SetBool("IsIdleLeft", direction == Vector2Int.left);
@@ -399,7 +410,7 @@ public class PacStudentController : MonoBehaviour
             if (clipToPlay != null)
             {
                 audioSource.clip = clipToPlay;
-                audioSource.loop = false; // Play once per movement, don't loop
+                audioSource.loop = false;
                 audioSource.Play();
                 
                 // Update audio state
