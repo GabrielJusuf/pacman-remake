@@ -6,11 +6,11 @@ public class PacStudentController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float tileSize = 1.0f;
-    public float movementSpeed = 2.0f; // Units per second
+    public float movementSpeed = 2.0f;
     
     [Header("Grid Settings")]
-    public int gridWidth = 28;  // Based on LevelGenerator full map width
-    public int gridHeight = 29; // Based on LevelGenerator full map height
+    public int gridWidth = 28;
+    public int gridHeight = 29;
     
     [Header("Animation Settings")]
     public Animator animator;
@@ -42,21 +42,13 @@ public class PacStudentController : MonoBehaviour
     private bool isPlayingPelletAudio = false;
     private bool hasPlayedMidpointAudio = false;
     
-    // Last facing direction for idle state
     private Vector2Int lastFacingDirection = Vector2Int.zero;
-    
-    // Animation state tracking
     private Vector2Int currentAnimationDirection = Vector2Int.zero;
-    
-    // Reference to Tweener for movement
     private Tweener tweener;
-    
-    // Reference to LevelGenerator for map data
     private LevelGenerator levelGenerator;
 
     void Start()
     {
-        // Get or create Tweener component
         tweener = FindObjectOfType<Tweener>();
         if (tweener == null)
         {
@@ -64,17 +56,15 @@ public class PacStudentController : MonoBehaviour
             tweener = tweenerObj.AddComponent<Tweener>();
         }
         
-        // Get LevelGenerator reference
         levelGenerator = FindObjectOfType<LevelGenerator>();
         
-        // Initialize animator and audio source
+        // Initialise animator and audio source
         if (animator == null)
             animator = GetComponent<Animator>();
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
         
-        // Initialize grid position to top-left walkable area
-        // Based on the LevelGenerator map, position (1,1) should be walkable (pellet)
+        // Initialise grid position to top-left walkable area
         currentGridPosition = new Vector2Int(1, 1);
         targetGridPosition = currentGridPosition;
         
@@ -192,7 +182,6 @@ public class PacStudentController : MonoBehaviour
             }
         }
         
-        // If neither works, PacStudent stops moving
         StopMovement();
     }
     
@@ -286,51 +275,39 @@ public class PacStudentController : MonoBehaviour
     
     private bool IsWalkable(Vector2Int gridPos)
     {
-        // Check if position is within bounds
         if (!IsValidGridPosition(gridPos))
             return false;
         
-        // Use LevelGenerator to check if the position is walkable
         if (levelGenerator != null)
         {
             return levelGenerator.IsWalkable(gridPos.x, gridPos.y);
         }
         
-        // Fallback: assume all positions within bounds are walkable
         return true;
     }
     
     private void StartMovement(Vector2Int targetPos)
     {
-        // Check if target position has a pellet
         bool hasPellet = HasPellet(targetPos);
         
-        // Reset midpoint audio flag
         hasPlayedMidpointAudio = false;
         
-        // Start movement
         MoveToGridPosition(targetPos);
         
-        // Start animations only (audio will play at midpoint)
         StartMovementAnimation();
     }
     
     private void StopMovement()
     {
-        // Stop animations and audio
         StopMovementAnimation();
         StopMovementAudio();
         
-        // Reset midpoint audio flag
         hasPlayedMidpointAudio = false;
     }
     
     private void PlayMidpointAudio()
     {
-        // Check if target position has a pellet
         bool hasPellet = HasPellet(targetGridPosition);
-        
-        // Play appropriate audio at the midpoint (tile center)
         StartMovementAudio(hasPellet);
     }
     
