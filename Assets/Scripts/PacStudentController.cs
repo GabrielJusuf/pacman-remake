@@ -170,7 +170,7 @@ public class PacStudentController : MonoBehaviour
                 return;
             }
         }
-        
+
         // If lastInput doesn't work, try currentInput
         if (currentInput != Vector2Int.zero)
         {
@@ -342,13 +342,13 @@ public class PacStudentController : MonoBehaviour
         {
             // Stop movement
             animator.SetBool("IsMoving", false);
-            
+
             // Reset all movement direction booleans
             animator.SetBool("IsMovingUp", false);
             animator.SetBool("IsMovingDown", false);
             animator.SetBool("IsMovingLeft", false);
             animator.SetBool("IsMovingRight", false);
-            
+
             // Set idle state based on last facing direction
             SetIdleDirection(lastFacingDirection);
         }
