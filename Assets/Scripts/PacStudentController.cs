@@ -66,6 +66,7 @@ public class PacStudentController : MonoBehaviour
     private Vector2Int currentAnimationDirection = Vector2Int.zero;
     private Tweener tweener;
     private LevelGenerator levelGenerator;
+    private GameManager gameManager;
     private float lastWallCollisionTime = -10f;
 
     void Start()
@@ -78,6 +79,7 @@ public class PacStudentController : MonoBehaviour
         }
         
         levelGenerator = FindObjectOfType<LevelGenerator>();
+        gameManager = FindObjectOfType<GameManager>();
         
         // Initialise animator and audio source
         if (animator == null)
@@ -142,6 +144,7 @@ public class PacStudentController : MonoBehaviour
                 isMoving = false;
                 Vector2Int moveDirection = targetGridPosition - previousGridPosition;
                 TryHandleTeleport(moveDirection);
+                HandlePelletConsumption();
                 
                 // Stop movement animations and audio
                 StopMovement();
@@ -466,6 +469,23 @@ public class PacStudentController : MonoBehaviour
             return levelGenerator.HasPellet(gridPos.x, gridPos.y);
         }
         return false;
+    }
+
+    private void HandlePelletConsumption()
+    {
+        if (levelGenerator == null)
+            return;
+
+        if (!levelGenerator.ConsumePellet(currentGridPosition.x, currentGridPosition.y, out bool wasPowerPellet))
+            return;
+
+        if (wasPowerPellet)
+            return;
+
+        if (gameManager != null)
+        {
+            gameManager.AwardPellet(wasPowerPellet);
+        }
     }
 
     private void TryHandleTeleport(Vector2Int moveDirection)

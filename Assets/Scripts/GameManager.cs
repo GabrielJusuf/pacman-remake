@@ -8,9 +8,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float startTimeSeconds = 0f;
     [SerializeField] private float timerStartDelaySeconds = 3f;
     [SerializeField] private HUDController hudController;
+    
+    [Header("Score Settings")]
+    [SerializeField] private int pelletScoreValue = 10;
+    [SerializeField] private int powerPelletScoreValue = 50;
+    [SerializeField] private int cherryScoreValue = 100;
 
     private float elapsedTime;
     private bool isTimerRunning;
+    private int currentScore;
 
     private void Awake()
     {
@@ -23,6 +29,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         ResetTimer(startTimeSeconds);
+        ResetScore();
 
         if (autoStartTimer)
         {
@@ -55,6 +62,34 @@ public class GameManager : MonoBehaviour
         PushTimeToHud();
     }
 
+    public void ResetScore()
+    {
+        currentScore = 0;
+        PushScoreToHud();
+    }
+
+    public void AddScore(int amount)
+    {
+        currentScore = Mathf.Max(0, currentScore + amount);
+        PushScoreToHud();
+    }
+
+    public void AwardPellet(bool isPowerPellet)
+    {
+        int amount = isPowerPellet ? powerPelletScoreValue : pelletScoreValue;
+        AddScore(amount);
+    }
+
+    public void AwardCherry()
+    {
+        AddScore(cherryScoreValue);
+    }
+
+    public int GetScore()
+    {
+        return currentScore;
+    }
+
     private void PushTimeToHud()
     {
         if (hudController == null)
@@ -62,8 +97,16 @@ public class GameManager : MonoBehaviour
 
         hudController.UpdateTimerDisplay(elapsedTime);
     }
-    
-        private IEnumerator StartTimerAfterDelay()
+
+    private void PushScoreToHud()
+    {
+        if (hudController == null)
+            return;
+
+        hudController.UpdateScoreDisplay(currentScore);
+    }
+
+    private IEnumerator StartTimerAfterDelay()
     {
         float delay = Mathf.Max(0f, timerStartDelaySeconds);
 
@@ -75,4 +118,3 @@ public class GameManager : MonoBehaviour
         StartTimer();
     }
 }
-
