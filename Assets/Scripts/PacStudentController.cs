@@ -19,6 +19,15 @@ public class PacStudentController : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip movementAudio;
     public AudioClip pelletEatingAudio;
+    [SerializeField] private AudioClip wallCollisionAudio;
+    
+    [Header("Collision Feedback")]
+    [SerializeField] private LayerMask wallLayerMask;
+    [SerializeField] private ParticleSystem wallCollisionParticles;
+    [SerializeField] private Vector3 wallCollisionEffectOffset = new Vector3(0f, 0.5f, 0f);
+    [SerializeField] private string wallCollisionParticleSortingLayer = "Characters";
+    [SerializeField] private int wallCollisionParticleSortingOrder = 50;
+    [SerializeField] private float wallCollisionEffectCooldown = 0.1f;
     
     // Grid position (in grid coordinates)
     private Vector2Int currentGridPosition;
@@ -27,6 +36,8 @@ public class PacStudentController : MonoBehaviour
     // World position (in world coordinates)
     private Vector3 currentWorldPosition;
     private Vector3 targetWorldPosition;
+    private Vector3 previousWorldPosition;
+    private Vector2Int previousGridPosition;
     
     // Movement state
     private bool isMoving = false;
@@ -46,6 +57,7 @@ public class PacStudentController : MonoBehaviour
     private Vector2Int currentAnimationDirection = Vector2Int.zero;
     private Tweener tweener;
     private LevelGenerator levelGenerator;
+    private float lastWallCollisionTime = -10f;
 
     void Start()
     {
@@ -67,10 +79,12 @@ public class PacStudentController : MonoBehaviour
         // Initialise grid position to top-left walkable area
         currentGridPosition = new Vector2Int(1, 1);
         targetGridPosition = currentGridPosition;
+        previousGridPosition = currentGridPosition;
         
         // Set initial world position
         currentWorldPosition = GridToWorldPosition(currentGridPosition);
         transform.position = currentWorldPosition;
+        previousWorldPosition = currentWorldPosition;
         
         // Set initial rotation to face right
         transform.rotation = Quaternion.identity;
@@ -158,24 +172,24 @@ public class PacStudentController : MonoBehaviour
     
     private void HandleMovement()
     {
-        // Try to move based on lastInput first
-        if (lastInput != Vector2Int.zero)
+        bool hasBufferedTurn = lastInput != Vector2Int.zero && (currentInput == Vector2Int.zero || lastInput != currentInput);
+
+        if (hasBufferedTurn)
         {
             Vector2Int targetPos = currentGridPosition + lastInput;
             if (IsWalkable(targetPos))
             {
-                // Store lastInput as currentInput and move
                 currentInput = lastInput;
                 StartMovement(targetPos);
                 return;
             }
         }
 
-        // If lastInput doesn't work, try currentInput
+        // Continue moving in the current direction regardless of walls so collisions can fire
         if (currentInput != Vector2Int.zero)
         {
             Vector2Int targetPos = currentGridPosition + currentInput;
-            if (IsWalkable(targetPos))
+            if (IsValidGridPosition(targetPos))
             {
                 StartMovement(targetPos);
                 return;
@@ -273,22 +287,10 @@ public class PacStudentController : MonoBehaviour
         return currentInput;
     }
     
-    private bool IsWalkable(Vector2Int gridPos)
-    {
-        if (!IsValidGridPosition(gridPos))
-            return false;
-        
-        if (levelGenerator != null)
-        {
-            return levelGenerator.IsWalkable(gridPos.x, gridPos.y);
-        }
-        
-        return true;
-    }
-    
     private void StartMovement(Vector2Int targetPos)
     {
         bool hasPellet = HasPellet(targetPos);
+        CachePreviousPosition();
         
         hasPlayedMidpointAudio = false;
         
@@ -303,6 +305,12 @@ public class PacStudentController : MonoBehaviour
         StopMovementAudio();
         
         hasPlayedMidpointAudio = false;
+    }
+
+    private void CachePreviousPosition()
+    {
+        previousWorldPosition = currentWorldPosition;
+        previousGridPosition = currentGridPosition;
     }
     
     private void PlayMidpointAudio()
@@ -397,14 +405,22 @@ public class PacStudentController : MonoBehaviour
         }
     }
     
-    private void StopMovementAudio()
+    private void StopMovementAudio(bool force = false)
     {
-        if (audioSource != null && audioSource.isPlaying)
+        if (audioSource == null)
+            return;
+
+        bool shouldStop = force || isPlayingMovementAudio || isPlayingPelletAudio;
+        if (!shouldStop)
+            return;
+
+        if (audioSource.isPlaying)
         {
             audioSource.Stop();
-            isPlayingMovementAudio = false;
-            isPlayingPelletAudio = false;
         }
+
+        isPlayingMovementAudio = false;
+        isPlayingPelletAudio = false;
     }
     
     private bool HasPellet(Vector2Int gridPos)
@@ -414,5 +430,109 @@ public class PacStudentController : MonoBehaviour
             return levelGenerator.HasPellet(gridPos.x, gridPos.y);
         }
         return false;
+    }
+
+    private bool IsWalkable(Vector2Int gridPos)
+    {
+        if (!IsValidGridPosition(gridPos))
+            return false;
+
+        if (levelGenerator != null)
+        {
+            return levelGenerator.IsWalkable(gridPos.x, gridPos.y);
+        }
+
+        return true;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!IsWallCollider(collision.collider))
+            return;
+
+        if (!isMoving)
+            return;
+
+        if (Time.time - lastWallCollisionTime < wallCollisionEffectCooldown)
+            return;
+
+        lastWallCollisionTime = Time.time;
+        HandleWallCollision(collision);
+    }
+
+    private void HandleWallCollision(Collision2D collision)
+    {
+        CancelMovementFromCollision();
+
+        if (wallCollisionParticles != null)
+        {
+            ParticleSystem particles = Instantiate(wallCollisionParticles, transform);
+            particles.transform.localPosition = wallCollisionEffectOffset;
+            particles.transform.localRotation = Quaternion.identity;
+            particles.transform.localScale = Vector3.one;
+
+            if (collision.contactCount > 0)
+            {
+                Vector2 contact = collision.GetContact(0).point;
+                Vector3 worldPos = new Vector3(contact.x, contact.y, transform.position.z);
+                particles.transform.position = worldPos + wallCollisionEffectOffset;
+            }
+
+            var renderer = particles.GetComponent<ParticleSystemRenderer>();
+            if (renderer != null)
+            {
+                if (!string.IsNullOrEmpty(wallCollisionParticleSortingLayer))
+                {
+                    renderer.sortingLayerName = wallCollisionParticleSortingLayer;
+                }
+                renderer.sortingOrder = wallCollisionParticleSortingOrder;
+            }
+
+            particles.Clear();
+            particles.Play();
+            var main = particles.main;
+            float maxLifetime = main.startLifetime.mode switch
+            {
+                ParticleSystemCurveMode.Constant => main.startLifetime.constant,
+                ParticleSystemCurveMode.TwoConstants => main.startLifetime.constantMax,
+                _ => main.startLifetime.constantMax
+            };
+            float destroyDelay = Mathf.Max(0.1f, main.duration + maxLifetime);
+            Destroy(particles.gameObject, destroyDelay);
+        }
+
+        if (audioSource != null && wallCollisionAudio != null)
+        {
+            audioSource.PlayOneShot(wallCollisionAudio);
+        }
+    }
+
+    private void CancelMovementFromCollision()
+    {
+        isMoving = false;
+        hasPlayedMidpointAudio = false;
+
+        transform.position = previousWorldPosition;
+        currentWorldPosition = previousWorldPosition;
+        targetWorldPosition = previousWorldPosition;
+
+        currentGridPosition = previousGridPosition;
+        targetGridPosition = previousGridPosition;
+
+        currentInput = Vector2Int.zero;
+
+        StopMovement();
+    }
+
+    private bool IsWallCollider(Collider2D collider)
+    {
+        if (collider == null)
+            return false;
+
+        if (wallLayerMask == 0)
+            return true;
+
+        int colliderLayerMask = 1 << collider.gameObject.layer;
+        return (wallLayerMask.value & colliderLayerMask) != 0;
     }
 }

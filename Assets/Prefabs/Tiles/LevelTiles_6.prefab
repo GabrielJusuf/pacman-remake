@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4759763836362618916}
   - component: {fileID: 8196289281896885788}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LevelTiles_6
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
