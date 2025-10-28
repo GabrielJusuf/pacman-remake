@@ -5,27 +5,26 @@ public class HUDController : MonoBehaviour
 {
     [Header("Timer UI")]
     [SerializeField] private TMP_Text timerText;
-    [SerializeField] private string emptyTimerPlaceholder = "--:--";
 
     [Header("Score UI")]
     [SerializeField] private TMP_Text scoreText;
-    
+
+    [Header("Ghost Timer UI")]
+    [SerializeField] private GameObject ghostTimerContainer;
+    [SerializeField] private TMP_Text ghostTimerText;
+    [SerializeField] private string ghostTimerFormat = "{0 a :0.0}";
+
     private void Start()
     {
         UpdateTimerDisplay(0f);
         UpdateScoreDisplay(0);
+        SetGhostTimerActive(false);
     }
 
     public void UpdateTimerDisplay(float elapsedSeconds)
     {
         if (timerText == null)
             return;
-
-        if (elapsedSeconds < 0f)
-        {
-            timerText.text = emptyTimerPlaceholder;
-            return;
-        }
 
         int minutes = Mathf.FloorToInt(elapsedSeconds / 60f);
         int seconds = Mathf.FloorToInt(elapsedSeconds % 60f);
@@ -40,5 +39,35 @@ public class HUDController : MonoBehaviour
             return;
 
         scoreText.text = $"{score}";
+    }
+
+    public void SetGhostTimerActive(bool isActive)
+    {
+        if (ghostTimerContainer != null)
+        {
+            ghostTimerContainer.SetActive(isActive);
+        }
+
+        if (!isActive && ghostTimerText != null)
+        {
+            ghostTimerText.text = string.Empty;
+        }
+    }
+
+    public void UpdateGhostTimerDisplay(float secondsRemaining)
+    {
+        if (ghostTimerText == null)
+            return;
+
+        float displaySeconds = Mathf.Max(0f, secondsRemaining);
+
+        if (!string.IsNullOrEmpty(ghostTimerFormat) && ghostTimerFormat.Contains("{0"))
+        {
+            ghostTimerText.text = string.Format(ghostTimerFormat, displaySeconds);
+        }
+        else
+        {
+            ghostTimerText.text = $"{displaySeconds:0.0}s";
+        }
     }
 }

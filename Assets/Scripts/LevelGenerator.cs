@@ -281,11 +281,6 @@ public class LevelGenerator : MonoBehaviour
 
         wasPowerPellet = tileType == 6;
 
-        if (wasPowerPellet)
-        {
-            return false;
-        }
-
         GameObject pelletTile = spawnedTiles[gridY, gridX];
         Transform parent = null;
         Vector3 position = Vector3.zero;

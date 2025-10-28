@@ -1,13 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioPlayer : MonoBehaviour
 {
     [SerializeField] private AudioClip introBGM;
     [SerializeField] private AudioClip ghostNormalBGM;
+    [SerializeField] private AudioClip ghostScaredBGM;
 
     AudioSource source;
+    Coroutine introRoutine;
 
     void Awake()
     {
@@ -16,7 +17,14 @@ public class AudioPlayer : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(PlayIntroThenNormal());
+        if (introBGM != null)
+        {
+            introRoutine = StartCoroutine(PlayIntroThenNormal());
+        }
+        else
+        {
+            PlayNormalLoop();
+        }
     }
 
     IEnumerator PlayIntroThenNormal()
@@ -35,11 +43,39 @@ public class AudioPlayer : MonoBehaviour
             }
         }
 
-        if (ghostNormalBGM != null && source != null)
+        introRoutine = null;
+        PlayNormalLoop();
+    }
+
+    public void PlayNormalLoop()
+    {
+        if (introRoutine != null)
         {
-            source.loop = true;
-            source.clip = ghostNormalBGM;
-            source.Play();
+            StopCoroutine(introRoutine);
+            introRoutine = null;
         }
+
+        PlayLoop(ghostNormalBGM);
+    }
+
+    public void PlayScaredLoop()
+    {
+        if (introRoutine != null)
+        {
+            StopCoroutine(introRoutine);
+            introRoutine = null;
+        }
+
+        PlayLoop(ghostScaredBGM);
+    }
+
+    private void PlayLoop(AudioClip clip)
+    {
+        if (clip == null || source == null)
+            return;
+
+        source.loop = true;
+        source.clip = clip;
+        source.Play();
     }
 }

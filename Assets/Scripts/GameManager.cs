@@ -13,10 +13,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int pelletScoreValue = 10;
     [SerializeField] private int powerPelletScoreValue = 50;
     [SerializeField] private int cherryScoreValue = 100;
+    
+    [Header("Power Pellet Settings")]
+    [SerializeField] private float powerPelletDurationSeconds = 10f;
+    [SerializeField] private float powerPelletRecoverWarningSeconds = 3f;
+    [SerializeField] private AudioPlayer audioPlayer;
 
     private float elapsedTime;
     private bool isTimerRunning;
     private int currentScore;
+    private GhostController[] ghostControllers;
+    private Coroutine powerModeRoutine;
+    private float powerModeTimeRemaining;
+    private bool powerModeRecoverTriggered;
 
     private void Awake()
     {
@@ -24,12 +33,23 @@ public class GameManager : MonoBehaviour
         {
             hudController = FindObjectOfType<HUDController>();
         }
+        
+        if (audioPlayer == null)
+        {
+            audioPlayer = FindObjectOfType<AudioPlayer>();
+        }
+
+        RefreshGhostControllers();
     }
 
     private void Start()
     {
         ResetTimer(startTimeSeconds);
         ResetScore();
+        if (hudController != null)
+        {
+            hudController.SetGhostTimerActive(false);
+        }
 
         if (autoStartTimer)
         {
@@ -74,10 +94,17 @@ public class GameManager : MonoBehaviour
         PushScoreToHud();
     }
 
-    public void AwardPellet(bool isPowerPellet)
+    public void HandlePelletConsumed(bool isPowerPellet)
     {
-        int amount = isPowerPellet ? powerPelletScoreValue : pelletScoreValue;
-        AddScore(amount);
+        if (isPowerPellet)
+        {
+            AddScore(powerPelletScoreValue);
+            ActivatePowerMode();
+        }
+        else
+        {
+            AddScore(pelletScoreValue);
+        }
     }
 
     public void AwardCherry()
@@ -104,6 +131,97 @@ public class GameManager : MonoBehaviour
             return;
 
         hudController.UpdateScoreDisplay(currentScore);
+    }
+
+    private void ActivatePowerMode()
+    {
+        RefreshGhostControllers();
+
+        if (powerModeRoutine != null)
+        {
+            StopCoroutine(powerModeRoutine);
+        }
+
+        powerModeRoutine = StartCoroutine(PowerModeRoutine());
+    }
+
+    private IEnumerator PowerModeRoutine()
+    {
+        powerModeTimeRemaining = Mathf.Max(0f, powerPelletDurationSeconds);
+        powerModeRecoverTriggered = false;
+        float recoverThreshold = Mathf.Clamp(powerPelletRecoverWarningSeconds, 0f, powerModeTimeRemaining);
+
+        SetGhostsStateExceptDead(GhostState.Scared);
+
+        if (audioPlayer != null)
+        {
+            audioPlayer.PlayScaredLoop();
+        }
+
+        if (hudController != null)
+        {
+            hudController.SetGhostTimerActive(true);
+            hudController.UpdateGhostTimerDisplay(powerModeTimeRemaining);
+        }
+
+        while (powerModeTimeRemaining > 0f)
+        {
+            powerModeTimeRemaining -= Time.deltaTime;
+
+            if (hudController != null)
+            {
+                float displayTime = Mathf.Max(0f, powerModeTimeRemaining);
+                hudController.UpdateGhostTimerDisplay(displayTime);
+            }
+
+            if (!powerModeRecoverTriggered && recoverThreshold > 0f && powerModeTimeRemaining <= recoverThreshold)
+            {
+                powerModeRecoverTriggered = true;
+                SetGhostsStateExceptDead(GhostState.Recovering);
+            }
+
+            yield return null;
+        }
+
+        EndPowerMode();
+    }
+
+    private void EndPowerMode()
+    {
+        RefreshGhostControllers();
+        powerModeRoutine = null;
+        powerModeTimeRemaining = 0f;
+        powerModeRecoverTriggered = false;
+        SetGhostsStateExceptDead(GhostState.Normal);
+
+        if (hudController != null)
+        {
+            hudController.SetGhostTimerActive(false);
+        }
+
+        if (audioPlayer != null)
+        {
+            audioPlayer.PlayNormalLoop();
+        }
+    }
+
+    private void RefreshGhostControllers()
+    {
+        ghostControllers = FindObjectsOfType<GhostController>();
+    }
+
+    private void SetGhostsStateExceptDead(GhostState targetState)
+    {
+        if (ghostControllers == null)
+            return;
+
+        foreach (GhostController ghost in ghostControllers)
+        {
+            if (ghost == null)
+                continue;
+
+            ghost.SetStateIfNotDead(targetState);
+        }
     }
 
     private IEnumerator StartTimerAfterDelay()

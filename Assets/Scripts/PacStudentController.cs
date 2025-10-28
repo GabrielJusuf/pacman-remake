@@ -481,12 +481,9 @@ public class PacStudentController : MonoBehaviour
         if (!levelGenerator.ConsumePellet(currentGridPosition.x, currentGridPosition.y, out bool wasPowerPellet))
             return;
 
-        if (wasPowerPellet)
-            return;
-
         if (gameManager != null)
         {
-            gameManager.AwardPellet(wasPowerPellet);
+            gameManager.HandlePelletConsumed(wasPowerPellet);
         }
     }
 
