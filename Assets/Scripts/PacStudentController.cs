@@ -67,6 +67,7 @@ public class PacStudentController : MonoBehaviour
     private Tweener tweener;
     private LevelGenerator levelGenerator;
     private GameManager gameManager;
+    private CherryController cherryController;
     private float lastWallCollisionTime = -10f;
 
     void Start()
@@ -80,6 +81,7 @@ public class PacStudentController : MonoBehaviour
         
         levelGenerator = FindObjectOfType<LevelGenerator>();
         gameManager = FindObjectOfType<GameManager>();
+        cherryController = FindObjectOfType<CherryController>();
         
         // Initialise animator and audio source
         if (animator == null)
@@ -627,5 +629,33 @@ public class PacStudentController : MonoBehaviour
 
         int colliderLayerMask = 1 << collider.gameObject.layer;
         return (wallLayerMask.value & colliderLayerMask) != 0;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision == null)
+            return;
+
+        if (!collision.CompareTag("BonusCherry"))
+            return;
+
+        HandleCherryPickup(collision.gameObject);
+    }
+
+    private void HandleCherryPickup(GameObject cherryObject)
+    {
+        if (gameManager != null)
+        {
+            gameManager.AwardCherry();
+        }
+
+        if (cherryController != null)
+        {
+            cherryController.DestroyCherryInstance();
+        }
+        else if (cherryObject != null)
+        {
+            Destroy(cherryObject);
+        }
     }
 }

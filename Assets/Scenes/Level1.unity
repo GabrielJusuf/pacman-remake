@@ -472,6 +472,9 @@ MonoBehaviour:
   startTimeSeconds: 0
   timerStartDelaySeconds: 3
   hudController: {fileID: 96553573}
+  pelletScoreValue: 10
+  powerPelletScoreValue: 50
+  cherryScoreValue: 100
 --- !u!114 &96553573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -485,7 +488,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1943842765}
-  scoreText: {fileID: 0}
+  emptyTimerPlaceholder: --:--
+  scoreText: {fileID: 433327549}
 --- !u!1 &174234700
 GameObject:
   m_ObjectHideFlags: 0
