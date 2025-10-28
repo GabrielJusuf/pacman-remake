@@ -16,6 +16,9 @@ public class LevelGenerator : MonoBehaviour
     public GameObject ghostExit;        // 8
 
     private float tileSize = 1.0f;
+    private GameObject[,] spawnedTiles;
+    private int totalNormalPellets;
+    private int remainingNormalPellets;
 
     // TO MARKER: Replace quad with another array for test case marking
     private int[,] quad = new int[,]
@@ -102,6 +105,10 @@ public class LevelGenerator : MonoBehaviour
         int rowSize = map.GetLength(0);
         int colSize = map.GetLength(1);
 
+        spawnedTiles = new GameObject[rowSize, colSize];
+        totalNormalPellets = 0;
+        remainingNormalPellets = 0;
+
         for (int row = 0; row < rowSize; row++)
         {
             for (int col = 0; col < colSize; col++)
@@ -113,6 +120,13 @@ public class LevelGenerator : MonoBehaviour
                 Vector3 pos = GridToWorldCentered(col, row, colSize, rowSize);
                 var tile = Instantiate(prefab, pos, Quaternion.identity, parent);
                 tile.transform.rotation = FindRotation(id, map, row, col);
+                spawnedTiles[row, col] = tile;
+
+                if (id == 5)
+                {
+                    totalNormalPellets++;
+                    remainingNormalPellets++;
+                }
             }
         }
     }
@@ -230,7 +244,6 @@ public class LevelGenerator : MonoBehaviour
         return map[row, col];
     }
     
-    // Public method to check if a grid position is walkable
     public bool IsWalkable(int gridX, int gridY)
     {
         if (full == null) return false;
@@ -259,6 +272,68 @@ public class LevelGenerator : MonoBehaviour
         
         // Pellet tiles: standardPellet (5), powerPellet (6)
         return tileType == 5 || tileType == 6;
+    }
+
+    public bool ConsumePellet(int gridX, int gridY, out bool wasPowerPellet)
+    {
+        wasPowerPellet = false;
+
+        if (full == null || spawnedTiles == null)
+            return false;
+
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+
+        int tileType = full[gridY, gridX];
+
+        if (tileType != 5 && tileType != 6)
+            return false;
+
+        wasPowerPellet = tileType == 6;
+
+        GameObject pelletTile = spawnedTiles[gridY, gridX];
+        Transform parent = null;
+        Vector3 position = Vector3.zero;
+        Quaternion rotation = Quaternion.identity;
+
+        if (pelletTile != null)
+        {
+            parent = pelletTile.transform.parent;
+            position = pelletTile.transform.position;
+            rotation = pelletTile.transform.rotation;
+            Destroy(pelletTile);
+            spawnedTiles[gridY, gridX] = null;
+        }
+
+        full[gridY, gridX] = 0;
+
+        if (tileType == 5)
+        {
+            remainingNormalPellets = Mathf.Max(0, remainingNormalPellets - 1);
+        }
+
+        if (empty != null && parent != null)
+        {
+            GameObject replacement = Instantiate(empty, position, rotation, parent);
+            spawnedTiles[gridY, gridX] = replacement;
+        }
+
+        return true;
+    }
+
+    public int GetTotalNormalPellets()
+    {
+        return totalNormalPellets;
+    }
+
+    public int GetRemainingNormalPellets()
+    {
+        return remainingNormalPellets;
+    }
+
+    public bool AreAllNormalPelletsCollected()
+    {
+        return remainingNormalPellets <= 0 && totalNormalPellets > 0;
     }
 
 }

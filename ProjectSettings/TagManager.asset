@@ -5,11 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - ExitButton
+  - Wall
+  - BonusCherry
+  - Ghost
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - UI Border
