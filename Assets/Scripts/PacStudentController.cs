@@ -28,6 +28,15 @@ public class PacStudentController : MonoBehaviour
     [SerializeField] private string wallCollisionParticleSortingLayer = "Characters";
     [SerializeField] private int wallCollisionParticleSortingOrder = 50;
     [SerializeField] private float wallCollisionEffectCooldown = 0.1f;
+
+    private struct TeleporterMapping
+    {
+        public Vector2Int entry;
+        public Vector2Int exit;
+        public Vector2Int requiredDirection;
+    }
+
+    private TeleporterMapping[] teleporters;
     
     // Grid position (in grid coordinates)
     private Vector2Int currentGridPosition;
@@ -96,6 +105,8 @@ public class PacStudentController : MonoBehaviour
             animator.SetBool("IsMoving", false);
             SetIdleDirection(Vector2Int.right);
         }
+
+        InitializeTeleporters();
     }
 
     void Update()
@@ -129,6 +140,8 @@ public class PacStudentController : MonoBehaviour
                 currentWorldPosition = targetWorldPosition;
                 currentGridPosition = targetGridPosition;
                 isMoving = false;
+                Vector2Int moveDirection = targetGridPosition - previousGridPosition;
+                TryHandleTeleport(moveDirection);
                 
                 // Stop movement animations and audio
                 StopMovement();
@@ -312,6 +325,29 @@ public class PacStudentController : MonoBehaviour
         previousWorldPosition = currentWorldPosition;
         previousGridPosition = currentGridPosition;
     }
+
+    private void InitializeTeleporters()
+    {
+        int centerRow = Mathf.Clamp(gridHeight / 2, 0, gridHeight - 1);
+        int leftColumn = 0;
+        int rightColumn = Mathf.Max(0, gridWidth - 1);
+
+        teleporters = new[]
+        {
+            new TeleporterMapping
+            {
+                entry = new Vector2Int(leftColumn, centerRow),
+                exit = new Vector2Int(rightColumn, centerRow),
+                requiredDirection = Vector2Int.left
+            },
+            new TeleporterMapping
+            {
+                entry = new Vector2Int(rightColumn, centerRow),
+                exit = new Vector2Int(leftColumn, centerRow),
+                requiredDirection = Vector2Int.right
+            }
+        };
+    }
     
     private void PlayMidpointAudio()
     {
@@ -430,6 +466,43 @@ public class PacStudentController : MonoBehaviour
             return levelGenerator.HasPellet(gridPos.x, gridPos.y);
         }
         return false;
+    }
+
+    private void TryHandleTeleport(Vector2Int moveDirection)
+    {
+        if (teleporters == null || teleporters.Length == 0)
+            return;
+
+        for (int i = 0; i < teleporters.Length; i++)
+        {
+            TeleporterMapping mapping = teleporters[i];
+
+            if (currentGridPosition != mapping.entry)
+                continue;
+
+            if (mapping.requiredDirection != Vector2Int.zero && moveDirection != mapping.requiredDirection)
+                continue;
+
+            Vector2Int exitGrid = mapping.exit;
+            Vector3 exitWorld = GridToWorldPosition(exitGrid);
+
+            transform.position = exitWorld;
+            currentWorldPosition = exitWorld;
+            targetWorldPosition = exitWorld;
+
+            previousWorldPosition = exitWorld;
+            previousGridPosition = exitGrid;
+
+            currentGridPosition = exitGrid;
+            targetGridPosition = exitGrid;
+
+            if (moveDirection != Vector2Int.zero)
+            {
+                currentInput = moveDirection;
+            }
+
+            break;
+        }
     }
 
     private bool IsWalkable(Vector2Int gridPos)
