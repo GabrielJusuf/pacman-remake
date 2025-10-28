@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +12,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float timerStartDelaySeconds = 3f;
     [SerializeField] private HUDController hudController;
     [SerializeField] private PacStudentController pacStudent;
+    [Header("Round Start UI")]
+    [SerializeField] private GameObject roundStartContainer;
+    [SerializeField] private TMP_Text roundStartText;
+    [SerializeField] private string[] roundStartSequence = { "3", "2", "1", "GO!" };
+    [SerializeField] private float countdownStepDuration = 0.85f;
     
     [Header("Score Settings")]
     [SerializeField] private int pelletScoreValue = 10;
@@ -27,6 +34,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float pacDeathAnimationDuration = 1.5f;
     [SerializeField] private float ghostRespawnDelaySeconds = 3f;
 
+    [Header("Game Over UI")]
+    [SerializeField] private GameObject gameOverContainer;
+    [SerializeField] private TMP_Text gameOverText;
+    [SerializeField] private float gameOverDisplaySeconds = 3f;
+
     private float elapsedTime;
     private bool isTimerRunning;
     private int currentScore;
@@ -38,6 +50,10 @@ public class GameManager : MonoBehaviour
     private bool isPacStudentInDeathSequence;
     private readonly System.Collections.Generic.Dictionary<GhostController, Coroutine> ghostRespawnCoroutines = new System.Collections.Generic.Dictionary<GhostController, Coroutine>();
     private int activeDeadGhosts;
+    private bool roundHasStarted;
+    private bool isGameOver;
+    private LevelGenerator levelGenerator;
+    private UIManager uiManager;
 
     private void Awake()
     {
@@ -56,6 +72,32 @@ public class GameManager : MonoBehaviour
             pacStudent = FindObjectOfType<PacStudentController>();
         }
 
+        levelGenerator = FindObjectOfType<LevelGenerator>();
+        uiManager = FindObjectOfType<UIManager>();
+
+        if (roundStartContainer != null)
+        {
+            roundStartContainer.SetActive(true);
+        }
+        if (roundStartText != null)
+        {
+            roundStartText.text = string.Empty;
+        }
+
+        if (audioPlayer != null)
+        {
+            audioPlayer.StopAllLoops();
+        }
+
+        if (gameOverContainer != null)
+        {
+            gameOverContainer.SetActive(false);
+        }
+        if (gameOverText != null)
+        {
+            gameOverText.text = string.Empty;
+        }
+
         RefreshGhostControllers();
     }
 
@@ -71,7 +113,17 @@ public class GameManager : MonoBehaviour
 
         if (autoStartTimer)
         {
-            StartCoroutine(StartTimerAfterDelay());
+            StartCoroutine(RoundStartSequence());
+        }
+        else
+        {
+            roundHasStarted = true;
+            if (roundStartContainer != null)
+            {
+                roundStartContainer.SetActive(false);
+            }
+            ApplyCurrentBackgroundMusic();
+            StartTimer();
         }
     }
 
@@ -114,6 +166,9 @@ public class GameManager : MonoBehaviour
 
     public void HandlePelletConsumed(bool isPowerPellet)
     {
+        if (isGameOver)
+            return;
+
         if (isPowerPellet)
         {
             AddScore(powerPelletScoreValue);
@@ -122,6 +177,11 @@ public class GameManager : MonoBehaviour
         else
         {
             AddScore(pelletScoreValue);
+
+            if (levelGenerator != null && levelGenerator.AreAllNormalPelletsCollected())
+            {
+                TriggerGameOver("Game Over!");
+            }
         }
     }
 
@@ -190,6 +250,9 @@ public class GameManager : MonoBehaviour
 
     private void HandleGhostEaten(GhostController ghost)
     {
+        if (isGameOver)
+            return;
+
         if (ghost == null)
             return;
 
@@ -210,6 +273,125 @@ public class GameManager : MonoBehaviour
 
         Coroutine routine = StartCoroutine(GhostRespawnRoutine(ghost));
         ghostRespawnCoroutines[ghost] = routine;
+    }
+
+    private IEnumerator RoundStartSequence()
+    {
+        roundHasStarted = false;
+
+        if (pacStudent != null)
+        {
+            pacStudent.SetControlsEnabled(false);
+        }
+
+        SetGhostsFrozen(true);
+
+        if (roundStartContainer != null)
+        {
+            roundStartContainer.SetActive(true);
+        }
+
+        if (audioPlayer != null)
+        {
+            audioPlayer.StopAllLoops();
+        }
+
+        string[] sequence = (roundStartSequence != null && roundStartSequence.Length > 0)
+            ? roundStartSequence
+            : new[] { "3", "2", "1", "GO!" };
+
+        float stepDuration = Mathf.Clamp(countdownStepDuration, 0.1f, 1f);
+        float totalCountdown = 4f;
+        float elapsed = 0f;
+
+        for (int i = 0; i < sequence.Length; i++)
+        {
+            string message = sequence[i];
+            if (roundStartText != null)
+            {
+                roundStartText.text = message;
+            }
+
+            if (i < sequence.Length - 1)
+            {
+                yield return new WaitForSeconds(stepDuration);
+                elapsed += stepDuration;
+            }
+            else
+            {
+                float remaining = Mathf.Max(0f, totalCountdown - elapsed);
+                float goDuration = Mathf.Max(stepDuration, remaining);
+                yield return new WaitForSeconds(goDuration);
+                elapsed += goDuration;
+            }
+        }
+
+        if (roundStartContainer != null)
+        {
+            roundStartContainer.SetActive(false);
+        }
+        if (roundStartText != null)
+        {
+            roundStartText.text = string.Empty;
+        }
+
+        if (pacStudent != null)
+        {
+            pacStudent.SetControlsEnabled(true);
+        }
+
+        SetGhostsFrozen(false);
+
+        roundHasStarted = true;
+        ApplyCurrentBackgroundMusic();
+        StartTimer();
+    }
+
+    private void TriggerGameOver(string message)
+    {
+        if (isGameOver)
+            return;
+
+        isGameOver = true;
+        roundHasStarted = false;
+        isPacStudentInDeathSequence = false;
+
+        StopTimer();
+
+        if (audioPlayer != null)
+        {
+            audioPlayer.StopAllLoops();
+        }
+
+        foreach (var kvp in new Dictionary<GhostController, Coroutine>(ghostRespawnCoroutines))
+        {
+            if (kvp.Value != null)
+            {
+                StopCoroutine(kvp.Value);
+            }
+        }
+        ghostRespawnCoroutines.Clear();
+        activeDeadGhosts = 0;
+
+        if (pacStudent != null)
+        {
+            pacStudent.SetControlsEnabled(false);
+        }
+
+        SetGhostsFrozen(true);
+
+        if (gameOverContainer != null)
+        {
+            gameOverContainer.SetActive(true);
+        }
+        if (gameOverText != null)
+        {
+            gameOverText.text = string.IsNullOrEmpty(message) ? "Game Over" : message;
+        }
+
+        SaveHighScore();
+
+        StartCoroutine(GameOverSequence());
     }
 
     private void ActivatePowerMode()
@@ -412,6 +594,17 @@ public class GameManager : MonoBehaviour
         livesRemaining = Mathf.Max(0, livesRemaining - 1);
         UpdateHudLives();
 
+        if (livesRemaining <= 0)
+        {
+            if (pacStudent != null)
+            {
+                pacStudent.ExitDeathSequence();
+            }
+            isPacStudentInDeathSequence = false;
+            TriggerGameOver("Game Over");
+            yield break;
+        }
+
         if (pacStudent != null)
         {
             pacStudent.ResetToSpawnPosition();
@@ -460,6 +653,12 @@ public class GameManager : MonoBehaviour
         if (audioPlayer == null)
             return;
 
+        if (!roundHasStarted || isGameOver)
+        {
+            audioPlayer.StopAllLoops();
+            return;
+        }
+
         if (powerModeTimeRemaining > 0f)
         {
             audioPlayer.PlayScaredLoop();
@@ -476,6 +675,36 @@ public class GameManager : MonoBehaviour
         else
         {
             audioPlayer.StopGhostEatenOverlay();
+        }
+    }
+
+    private IEnumerator GameOverSequence()
+    {
+        yield return new WaitForSeconds(Mathf.Max(0f, gameOverDisplaySeconds));
+
+        if (uiManager != null)
+        {
+            uiManager.ExitLevel();
+        }
+        else
+        {
+            SceneManager.LoadScene("StartScene");
+        }
+    }
+
+    private void SaveHighScore()
+    {
+        int bestScore = PlayerPrefs.GetInt("HighScore", 0);
+        float bestTime = PlayerPrefs.GetFloat("HighScoreTime", float.MaxValue);
+
+        bool isBetter = currentScore > bestScore;
+        bool sameScoreBetterTime = currentScore == bestScore && elapsedTime < bestTime;
+
+        if (isBetter || sameScoreBetterTime)
+        {
+            PlayerPrefs.SetInt("HighScore", currentScore);
+            PlayerPrefs.SetFloat("HighScoreTime", elapsedTime);
+            PlayerPrefs.Save();
         }
     }
 }

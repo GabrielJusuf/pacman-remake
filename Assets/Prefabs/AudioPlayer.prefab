@@ -144,3 +144,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   introBGM: {fileID: 8300000, guid: cab1bc4d459b549b386f1979594988eb, type: 3}
   ghostNormalBGM: {fileID: 8300000, guid: cef6ec35475644c3782ed50b9c6b4ed1, type: 3}
+  ghostScaredBGM: {fileID: 8300000, guid: 8fcc58ce0201446e3bf5ff6c9836546f, type: 3}
+  ghostEatenBGM: {fileID: 8300000, guid: 6811ba4f19af648f5aeb49ea2823dcde, type: 3}
+  pacDeathSFX: {fileID: 8300000, guid: b10764e90245c4238a2a234be51a3d72, type: 3}
+  normalVolume: 1
+  scaredVolume: 1
+  scaredDuckedVolume: 0.35
+  mainFadeDuration: 0.25
+  overlayFadeDuration: 0.1

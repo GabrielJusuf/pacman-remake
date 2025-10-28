@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileSize: 1
-  movementSpeed: 2
+  movementSpeed: 3
   gridWidth: 28
   gridHeight: 29
   animator: {fileID: 0}
@@ -253,6 +253,9 @@ MonoBehaviour:
   wallCollisionParticleSortingLayer: Characters
   wallCollisionParticleSortingOrder: 50
   wallCollisionEffectCooldown: 0.1
+  movementTrail: {fileID: 1530115498360509104}
+  deathAnimationTrigger: Die
+  deathParticles: {fileID: 944682606689560586, guid: 8a0999c9d95a64e4ba4f75a2446528c5, type: 3}
 --- !u!50 &4801745838486507816
 Rigidbody2D:
   serializedVersion: 4

@@ -532,6 +532,28 @@ public class PacStudentController : MonoBehaviour
         }
     }
 
+    public void SetControlsEnabled(bool enabled)
+    {
+        if (controlsEnabled == enabled)
+            return;
+
+        controlsEnabled = enabled;
+
+        if (!enabled)
+        {
+            lastInput = Vector2Int.zero;
+            currentInput = Vector2Int.zero;
+
+            if (isMoving)
+            {
+                isMoving = false;
+                transform.position = targetWorldPosition;
+                currentWorldPosition = targetWorldPosition;
+                StopMovement();
+            }
+        }
+    }
+
     public void EnterDeathSequence()
     {
         if (isInDeathSequence)

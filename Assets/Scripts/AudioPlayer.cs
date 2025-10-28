@@ -274,4 +274,13 @@ public class AudioPlayer : MonoBehaviour
             overlaySource.volume = 0f;
         }
     }
+
+    public void StopAllLoops()
+    {
+        StopGhostEatenOverlayImmediate();
+        if (mainSource != null)
+        {
+            mainSource.Stop();
+        }
+    }
 }

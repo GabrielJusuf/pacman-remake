@@ -17,6 +17,8 @@ public class LevelGenerator : MonoBehaviour
 
     private float tileSize = 1.0f;
     private GameObject[,] spawnedTiles;
+    private int totalNormalPellets;
+    private int remainingNormalPellets;
 
     // TO MARKER: Replace quad with another array for test case marking
     private int[,] quad = new int[,]
@@ -104,6 +106,8 @@ public class LevelGenerator : MonoBehaviour
         int colSize = map.GetLength(1);
 
         spawnedTiles = new GameObject[rowSize, colSize];
+        totalNormalPellets = 0;
+        remainingNormalPellets = 0;
 
         for (int row = 0; row < rowSize; row++)
         {
@@ -117,6 +121,12 @@ public class LevelGenerator : MonoBehaviour
                 var tile = Instantiate(prefab, pos, Quaternion.identity, parent);
                 tile.transform.rotation = FindRotation(id, map, row, col);
                 spawnedTiles[row, col] = tile;
+
+                if (id == 5)
+                {
+                    totalNormalPellets++;
+                    remainingNormalPellets++;
+                }
             }
         }
     }
@@ -297,6 +307,11 @@ public class LevelGenerator : MonoBehaviour
 
         full[gridY, gridX] = 0;
 
+        if (tileType == 5)
+        {
+            remainingNormalPellets = Mathf.Max(0, remainingNormalPellets - 1);
+        }
+
         if (empty != null && parent != null)
         {
             GameObject replacement = Instantiate(empty, position, rotation, parent);
@@ -304,6 +319,21 @@ public class LevelGenerator : MonoBehaviour
         }
 
         return true;
+    }
+
+    public int GetTotalNormalPellets()
+    {
+        return totalNormalPellets;
+    }
+
+    public int GetRemainingNormalPellets()
+    {
+        return remainingNormalPellets;
+    }
+
+    public bool AreAllNormalPelletsCollected()
+    {
+        return remainingNormalPellets <= 0 && totalNormalPellets > 0;
     }
 
 }
