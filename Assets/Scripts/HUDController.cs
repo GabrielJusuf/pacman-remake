@@ -9,10 +9,13 @@ public class HUDController : MonoBehaviour
     [Header("Score UI")]
     [SerializeField] private TMP_Text scoreText;
 
+    [Header("Lives UI")]
+    [SerializeField] private GameObject[] lifeIcons;
+
     [Header("Ghost Timer UI")]
     [SerializeField] private GameObject ghostTimerContainer;
     [SerializeField] private TMP_Text ghostTimerText;
-    [SerializeField] private string ghostTimerFormat = "{0 a :0.0}";
+    [SerializeField] private string ghostTimerFormat = "{0:0.0}s";
 
     private void Start()
     {
@@ -39,6 +42,25 @@ public class HUDController : MonoBehaviour
             return;
 
         scoreText.text = $"{score}";
+    }
+
+    public void UpdateLivesDisplay(int livesRemaining)
+    {
+        if (lifeIcons == null || lifeIcons.Length == 0)
+            return;
+
+        int clampedLives = Mathf.Clamp(livesRemaining, 0, lifeIcons.Length);
+
+        for (int i = 0; i < lifeIcons.Length; i++)
+        {
+            int indexFromRight = lifeIcons.Length - 1 - i;
+            GameObject icon = lifeIcons[indexFromRight];
+            if (icon == null)
+                continue;
+
+            bool shouldBeActive = i < clampedLives;
+            icon.SetActive(shouldBeActive);
+        }
     }
 
     public void SetGhostTimerActive(bool isActive)

@@ -13,12 +13,24 @@ public class GhostController : MonoBehaviour
     [SerializeField] private Animator animator;
 
     public GhostState CurrentState { get; private set; } = GhostState.Normal;
+    public bool IsFrozen { get; private set; }
+
+    private Vector3 spawnPosition;
+    private Quaternion spawnRotation;
+    private float defaultAnimatorSpeed = 1f;
 
     private void Awake()
     {
         if (animator == null)
         {
             animator = GetComponent<Animator>();
+        }
+
+        spawnPosition = transform.position;
+        spawnRotation = transform.rotation;
+        if (animator != null)
+        {
+            defaultAnimatorSpeed = animator.speed;
         }
 
         ApplyState(CurrentState);
@@ -47,5 +59,23 @@ public class GhostController : MonoBehaviour
         {
             animator.SetInteger("GhostState", (int)state);
         }
+    }
+
+    public void SetFrozen(bool frozen)
+    {
+        IsFrozen = frozen;
+
+        if (animator != null)
+        {
+            animator.speed = frozen ? 0f : defaultAnimatorSpeed;
+        }
+    }
+
+    public void ResetToSpawn()
+    {
+        transform.position = spawnPosition;
+        transform.rotation = spawnRotation;
+        SetFrozen(false);
+        SetState(GhostState.Normal);
     }
 }

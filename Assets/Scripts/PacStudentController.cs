@@ -28,6 +28,11 @@ public class PacStudentController : MonoBehaviour
     [SerializeField] private string wallCollisionParticleSortingLayer = "Characters";
     [SerializeField] private int wallCollisionParticleSortingOrder = 50;
     [SerializeField] private float wallCollisionEffectCooldown = 0.1f;
+    [SerializeField] private ParticleSystem movementTrail;
+
+    [Header("Death Settings")]
+    [SerializeField] private string deathAnimationTrigger = "Die";
+    [SerializeField] private ParticleSystem deathParticles;
 
     private struct TeleporterMapping
     {
@@ -62,13 +67,16 @@ public class PacStudentController : MonoBehaviour
     private bool isPlayingPelletAudio = false;
     private bool hasPlayedMidpointAudio = false;
     
-    private Vector2Int lastFacingDirection = Vector2Int.zero;
+    private Vector2Int lastFacingDirection = Vector2Int.right;
     private Vector2Int currentAnimationDirection = Vector2Int.zero;
     private Tweener tweener;
     private LevelGenerator levelGenerator;
     private GameManager gameManager;
     private CherryController cherryController;
     private float lastWallCollisionTime = -10f;
+    private bool controlsEnabled = true;
+    private bool isInDeathSequence = false;
+    private Vector2Int spawnGridPosition;
 
     void Start()
     {
@@ -93,10 +101,12 @@ public class PacStudentController : MonoBehaviour
         currentGridPosition = new Vector2Int(1, 1);
         targetGridPosition = currentGridPosition;
         previousGridPosition = currentGridPosition;
+        spawnGridPosition = currentGridPosition;
         
         // Set initial world position
         currentWorldPosition = GridToWorldPosition(currentGridPosition);
         transform.position = currentWorldPosition;
+        ClearTrail();
         previousWorldPosition = currentWorldPosition;
         
         // Set initial rotation to face right
@@ -115,15 +125,21 @@ public class PacStudentController : MonoBehaviour
 
     void Update()
     {
-        // Handle input
-        HandleInput();
-        
-        // Handle movement logic when not moving
-        if (!isMoving)
+        if (isInDeathSequence)
+            return;
+
+        if (controlsEnabled)
         {
-            HandleMovement();
+            // Handle input
+            HandleInput();
+
+            // Handle movement logic when not moving
+            if (!isMoving)
+            {
+                HandleMovement();
+            }
         }
-        
+
         // Handle movement lerping
         if (isMoving)
         {
@@ -147,9 +163,6 @@ public class PacStudentController : MonoBehaviour
                 Vector2Int moveDirection = targetGridPosition - previousGridPosition;
                 TryHandleTeleport(moveDirection);
                 HandlePelletConsumption();
-                
-                // Stop movement animations and audio
-                StopMovement();
             }
             else
             {
@@ -161,6 +174,9 @@ public class PacStudentController : MonoBehaviour
     
     private void HandleInput()
     {
+        if (!controlsEnabled)
+            return;
+
         // Check for new input
         Vector2Int newInput = Vector2Int.zero;
         
@@ -190,6 +206,9 @@ public class PacStudentController : MonoBehaviour
     
     private void HandleMovement()
     {
+        if (!controlsEnabled)
+            return;
+
         bool hasBufferedTurn = lastInput != Vector2Int.zero && (currentInput == Vector2Int.zero || lastInput != currentInput);
 
         if (hasBufferedTurn)
@@ -219,6 +238,9 @@ public class PacStudentController : MonoBehaviour
     
     public void MoveToGridPosition(Vector2Int gridPos)
     {
+        if (!controlsEnabled || isInDeathSequence)
+            return;
+
         // Validate grid position
         if (!IsValidGridPosition(gridPos))
         {
@@ -362,25 +384,43 @@ public class PacStudentController : MonoBehaviour
     
     private void StartMovementAnimation()
     {
-        if (animator != null)
+        if (animator == null)
+            return;
+
+        Vector2Int direction = currentInput;
+        if (direction == Vector2Int.zero)
         {
-            Vector2Int direction = currentInput;
-            
-            // Reset all direction booleans first
-            animator.SetBool("IsMovingUp", false);
-            animator.SetBool("IsMovingDown", false);
-            animator.SetBool("IsMovingLeft", false);
-            animator.SetBool("IsMovingRight", false);
-            
-            // Set the correct direction
-            animator.SetBool("IsMovingUp", direction == Vector2Int.down);
-            animator.SetBool("IsMovingDown", direction == Vector2Int.up);
-            animator.SetBool("IsMovingLeft", direction == Vector2Int.left);
-            animator.SetBool("IsMovingRight", direction == Vector2Int.right);
-            
-            // Set moving state
-            animator.SetBool("IsMoving", true);
+            direction = lastFacingDirection == Vector2Int.zero ? Vector2Int.right : lastFacingDirection;
         }
+
+        // Reset all movement direction booleans
+        animator.SetBool("IsMovingUp", false);
+        animator.SetBool("IsMovingDown", false);
+        animator.SetBool("IsMovingLeft", false);
+        animator.SetBool("IsMovingRight", false);
+
+        // Reset idle direction booleans
+        animator.SetBool("IsIdleUp", false);
+        animator.SetBool("IsIdleDown", false);
+        animator.SetBool("IsIdleLeft", false);
+        animator.SetBool("IsIdleRight", false);
+
+        // Apply movement direction
+        animator.SetBool("IsMovingUp", direction == Vector2Int.down);
+        animator.SetBool("IsMovingDown", direction == Vector2Int.up);
+        animator.SetBool("IsMovingLeft", direction == Vector2Int.left);
+        animator.SetBool("IsMovingRight", direction == Vector2Int.right);
+
+        if (currentInput != Vector2Int.zero)
+        {
+            lastFacingDirection = currentInput;
+        }
+        else
+        {
+            lastFacingDirection = direction;
+        }
+
+        animator.SetBool("IsMoving", true);
     }
     
     
@@ -418,6 +458,8 @@ public class PacStudentController : MonoBehaviour
         animator.SetBool("IsIdleDown", direction == Vector2Int.up);
         animator.SetBool("IsIdleLeft", direction == Vector2Int.left);
         animator.SetBool("IsIdleRight", direction == Vector2Int.right);
+
+        lastFacingDirection = direction;
     }
     
     private void StartMovementAudio(bool hasPellet)
@@ -478,6 +520,9 @@ public class PacStudentController : MonoBehaviour
         if (levelGenerator == null)
             return;
 
+        if (isInDeathSequence)
+            return;
+
         if (!levelGenerator.ConsumePellet(currentGridPosition.x, currentGridPosition.y, out bool wasPowerPellet))
             return;
 
@@ -485,6 +530,96 @@ public class PacStudentController : MonoBehaviour
         {
             gameManager.HandlePelletConsumed(wasPowerPellet);
         }
+    }
+
+    public void EnterDeathSequence()
+    {
+        if (isInDeathSequence)
+            return;
+
+        isInDeathSequence = true;
+        controlsEnabled = false;
+        isMoving = false;
+        StopMovement();
+        StopMovementAudio(true);
+
+        lastInput = Vector2Int.zero;
+        currentInput = Vector2Int.zero;
+
+        if (animator != null && !string.IsNullOrEmpty(deathAnimationTrigger))
+        {
+            animator.ResetTrigger(deathAnimationTrigger);
+            animator.SetTrigger(deathAnimationTrigger);
+        }
+
+        SpawnDeathParticles();
+    }
+
+    public void ResetToSpawnPosition()
+    {
+        currentGridPosition = spawnGridPosition;
+        targetGridPosition = spawnGridPosition;
+        previousGridPosition = spawnGridPosition;
+
+        currentWorldPosition = GridToWorldPosition(spawnGridPosition);
+        targetWorldPosition = currentWorldPosition;
+        previousWorldPosition = currentWorldPosition;
+
+        transform.position = currentWorldPosition;
+        transform.rotation = Quaternion.identity;
+        ClearTrail();
+
+        lastInput = Vector2Int.zero;
+        currentInput = Vector2Int.zero;
+        lastFacingDirection = Vector2Int.right;
+        SetIdleDirection(Vector2Int.right);
+    }
+
+    public void ExitDeathSequence()
+    {
+        StopMovementAudio(true);
+        isInDeathSequence = false;
+        controlsEnabled = true;
+        hasPlayedMidpointAudio = false;
+        isMoving = false;
+        lastInput = Vector2Int.zero;
+        currentInput = Vector2Int.zero;
+        lastFacingDirection = Vector2Int.right;
+        SetIdleDirection(Vector2Int.right);
+    }
+
+    private void SpawnDeathParticles()
+    {
+        if (deathParticles == null)
+            return;
+
+        ParticleSystem particles = Instantiate(deathParticles, transform.position, Quaternion.identity);
+        var main = particles.main;
+        float maxLifetime = main.startLifetime.mode switch
+        {
+            ParticleSystemCurveMode.Constant => main.startLifetime.constant,
+            ParticleSystemCurveMode.TwoConstants => main.startLifetime.constantMax,
+            _ => main.startLifetime.constantMax
+        };
+        float destroyDelay = Mathf.Max(0.1f, main.duration + maxLifetime);
+        Destroy(particles.gameObject, destroyDelay);
+    }
+
+    private void ClearTrail()
+    {
+        if (movementTrail == null)
+            return;
+
+        if (movementTrail.isPlaying)
+        {
+            movementTrail.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+        else
+        {
+            movementTrail.Clear();
+        }
+
+        movementTrail.Play();
     }
 
     private void TryHandleTeleport(Vector2Int moveDirection)
@@ -633,10 +768,16 @@ public class PacStudentController : MonoBehaviour
         if (collision == null)
             return;
 
-        if (!collision.CompareTag("BonusCherry"))
+        if (collision.CompareTag("BonusCherry"))
+        {
+            HandleCherryPickup(collision.gameObject);
             return;
+        }
 
-        HandleCherryPickup(collision.gameObject);
+        if (collision.CompareTag("Ghost"))
+        {
+            HandleGhostCollision(collision);
+        }
     }
 
     private void HandleCherryPickup(GameObject cherryObject)
@@ -654,5 +795,22 @@ public class PacStudentController : MonoBehaviour
         {
             Destroy(cherryObject);
         }
+    }
+
+    private void HandleGhostCollision(Collider2D ghostCollider)
+    {
+        if (isInDeathSequence)
+            return;
+
+        if (gameManager == null)
+            return;
+
+        GhostController ghost = ghostCollider.GetComponent<GhostController>();
+        if (ghost == null)
+        {
+            ghost = ghostCollider.GetComponentInParent<GhostController>();
+        }
+
+        gameManager.HandleGhostCollision(ghost);
     }
 }

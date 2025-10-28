@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float startTimeSeconds = 0f;
     [SerializeField] private float timerStartDelaySeconds = 3f;
     [SerializeField] private HUDController hudController;
+    [SerializeField] private PacStudentController pacStudent;
     
     [Header("Score Settings")]
     [SerializeField] private int pelletScoreValue = 10;
@@ -19,6 +20,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float powerPelletRecoverWarningSeconds = 3f;
     [SerializeField] private AudioPlayer audioPlayer;
 
+    [Header("Lives Settings")]
+    [SerializeField] private int startingLives = 3;
+    [SerializeField] private float pacDeathAnimationDuration = 1.5f;
+
     private float elapsedTime;
     private bool isTimerRunning;
     private int currentScore;
@@ -26,6 +31,8 @@ public class GameManager : MonoBehaviour
     private Coroutine powerModeRoutine;
     private float powerModeTimeRemaining;
     private bool powerModeRecoverTriggered;
+    private int livesRemaining;
+    private bool isPacStudentInDeathSequence;
 
     private void Awake()
     {
@@ -39,6 +46,11 @@ public class GameManager : MonoBehaviour
             audioPlayer = FindObjectOfType<AudioPlayer>();
         }
 
+        if (pacStudent == null)
+        {
+            pacStudent = FindObjectOfType<PacStudentController>();
+        }
+
         RefreshGhostControllers();
     }
 
@@ -46,6 +58,7 @@ public class GameManager : MonoBehaviour
     {
         ResetTimer(startTimeSeconds);
         ResetScore();
+        InitializeLives();
         if (hudController != null)
         {
             hudController.SetGhostTimerActive(false);
@@ -107,6 +120,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void HandleGhostCollision(GhostController ghost)
+    {
+        if (isPacStudentInDeathSequence)
+            return;
+
+        if (ghost == null)
+            return;
+
+        switch (ghost.CurrentState)
+        {
+            case GhostState.Normal:
+                HandlePacStudentDeath();
+                break;
+            case GhostState.Scared:
+            case GhostState.Recovering:
+                // Future: PacStudent eats ghost
+                break;
+            case GhostState.Dead:
+                // No action when ghost already dead
+                break;
+        }
+    }
+
     public void AwardCherry()
     {
         AddScore(cherryScoreValue);
@@ -133,6 +169,20 @@ public class GameManager : MonoBehaviour
         hudController.UpdateScoreDisplay(currentScore);
     }
 
+    private void InitializeLives()
+    {
+        livesRemaining = Mathf.Max(0, startingLives);
+        UpdateHudLives();
+    }
+
+    private void UpdateHudLives()
+    {
+        if (hudController == null)
+            return;
+
+        hudController.UpdateLivesDisplay(livesRemaining);
+    }
+
     private void ActivatePowerMode()
     {
         RefreshGhostControllers();
@@ -143,6 +193,21 @@ public class GameManager : MonoBehaviour
         }
 
         powerModeRoutine = StartCoroutine(PowerModeRoutine());
+    }
+
+    private void HandlePacStudentDeath()
+    {
+        if (pacStudent == null)
+            return;
+
+        isPacStudentInDeathSequence = true;
+
+        CancelPowerModeIfActive();
+        SetGhostsFrozen(true);
+        pacStudent.EnterDeathSequence();
+        PlayDeathAudio();
+
+        StartCoroutine(PacStudentDeathRoutine());
     }
 
     private IEnumerator PowerModeRoutine()
@@ -205,6 +270,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CancelPowerModeIfActive()
+    {
+        if (powerModeRoutine != null)
+        {
+            StopCoroutine(powerModeRoutine);
+            powerModeRoutine = null;
+        }
+
+        if (powerModeTimeRemaining > 0f || powerModeRecoverTriggered)
+        {
+            EndPowerMode();
+        }
+    }
+
     private void RefreshGhostControllers()
     {
         ghostControllers = FindObjectsOfType<GhostController>();
@@ -224,6 +303,67 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SetGhostsFrozen(bool frozen)
+    {
+        RefreshGhostControllers();
+
+        if (ghostControllers == null)
+            return;
+
+        foreach (GhostController ghost in ghostControllers)
+        {
+            if (ghost == null)
+                continue;
+
+            ghost.SetFrozen(frozen);
+        }
+    }
+
+    private void ResetGhostsToSpawn()
+    {
+        RefreshGhostControllers();
+
+        if (ghostControllers == null)
+            return;
+
+        foreach (GhostController ghost in ghostControllers)
+        {
+            if (ghost == null)
+                continue;
+
+            ghost.ResetToSpawn();
+        }
+    }
+
+    private IEnumerator PacStudentDeathRoutine()
+    {
+        float waitDuration = Mathf.Max(0f, pacDeathAnimationDuration);
+        if (waitDuration > 0f)
+        {
+            yield return new WaitForSeconds(waitDuration);
+        }
+
+        livesRemaining = Mathf.Max(0, livesRemaining - 1);
+        UpdateHudLives();
+
+        if (pacStudent != null)
+        {
+            pacStudent.ResetToSpawnPosition();
+        }
+
+        ResetGhostsToSpawn();
+
+        SetGhostsFrozen(false);
+        PlayNormalAudioIfNeeded();
+
+        if (pacStudent != null)
+        {
+            pacStudent.ExitDeathSequence();
+        }
+
+        isPacStudentInDeathSequence = false;
+    }
+
     private IEnumerator StartTimerAfterDelay()
     {
         float delay = Mathf.Max(0f, timerStartDelaySeconds);
@@ -234,5 +374,21 @@ public class GameManager : MonoBehaviour
         }
 
         StartTimer();
+    }
+
+    private void PlayDeathAudio()
+    {
+        if (audioPlayer == null)
+            return;
+
+        audioPlayer.PlayDeathOnce();
+    }
+
+    private void PlayNormalAudioIfNeeded()
+    {
+        if (audioPlayer == null)
+            return;
+
+        audioPlayer.PlayNormalLoop();
     }
 }
