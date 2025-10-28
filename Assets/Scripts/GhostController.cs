@@ -11,6 +11,7 @@ public enum GhostState
 public class GhostController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    [SerializeField] private Collider2D ghostCollider;
 
     public GhostState CurrentState { get; private set; } = GhostState.Normal;
     public bool IsFrozen { get; private set; }
@@ -24,6 +25,11 @@ public class GhostController : MonoBehaviour
         if (animator == null)
         {
             animator = GetComponent<Animator>();
+        }
+
+        if (ghostCollider == null)
+        {
+            ghostCollider = GetComponent<Collider2D>();
         }
 
         spawnPosition = transform.position;
@@ -77,5 +83,31 @@ public class GhostController : MonoBehaviour
         transform.rotation = spawnRotation;
         SetFrozen(false);
         SetState(GhostState.Normal);
+        if (ghostCollider != null)
+        {
+            ghostCollider.enabled = true;
+        }
+    }
+
+    public void EnterDeadState()
+    {
+        SetFrozen(false);
+        SetState(GhostState.Dead);
+        if (ghostCollider != null)
+        {
+            ghostCollider.enabled = false;
+        }
+    }
+
+    public void RespawnToState(GhostState newState)
+    {
+        transform.position = spawnPosition;
+        transform.rotation = spawnRotation;
+        if (ghostCollider != null)
+        {
+            ghostCollider.enabled = true;
+        }
+        SetFrozen(false);
+        SetState(newState);
     }
 }

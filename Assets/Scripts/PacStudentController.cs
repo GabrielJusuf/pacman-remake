@@ -768,6 +768,9 @@ public class PacStudentController : MonoBehaviour
         if (collision == null)
             return;
 
+        if (isInDeathSequence)
+            return;
+
         if (collision.CompareTag("BonusCherry"))
         {
             HandleCherryPickup(collision.gameObject);

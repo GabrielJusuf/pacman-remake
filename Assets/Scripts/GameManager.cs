@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -14,7 +15,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int pelletScoreValue = 10;
     [SerializeField] private int powerPelletScoreValue = 50;
     [SerializeField] private int cherryScoreValue = 100;
-    
+    [SerializeField] private int ghostEatenScoreValue = 300;
+
     [Header("Power Pellet Settings")]
     [SerializeField] private float powerPelletDurationSeconds = 10f;
     [SerializeField] private float powerPelletRecoverWarningSeconds = 3f;
@@ -23,6 +25,7 @@ public class GameManager : MonoBehaviour
     [Header("Lives Settings")]
     [SerializeField] private int startingLives = 3;
     [SerializeField] private float pacDeathAnimationDuration = 1.5f;
+    [SerializeField] private float ghostRespawnDelaySeconds = 3f;
 
     private float elapsedTime;
     private bool isTimerRunning;
@@ -33,6 +36,8 @@ public class GameManager : MonoBehaviour
     private bool powerModeRecoverTriggered;
     private int livesRemaining;
     private bool isPacStudentInDeathSequence;
+    private readonly System.Collections.Generic.Dictionary<GhostController, Coroutine> ghostRespawnCoroutines = new System.Collections.Generic.Dictionary<GhostController, Coroutine>();
+    private int activeDeadGhosts;
 
     private void Awake()
     {
@@ -135,7 +140,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GhostState.Scared:
             case GhostState.Recovering:
-                // Future: PacStudent eats ghost
+                HandleGhostEaten(ghost);
                 break;
             case GhostState.Dead:
                 // No action when ghost already dead
@@ -183,6 +188,30 @@ public class GameManager : MonoBehaviour
         hudController.UpdateLivesDisplay(livesRemaining);
     }
 
+    private void HandleGhostEaten(GhostController ghost)
+    {
+        if (ghost == null)
+            return;
+
+        AddScore(ghostEatenScoreValue);
+
+        if (ghostRespawnCoroutines.TryGetValue(ghost, out Coroutine existing))
+        {
+            if (existing != null)
+            {
+                StopCoroutine(existing);
+            }
+            ghostRespawnCoroutines.Remove(ghost);
+        }
+
+        ghost.EnterDeadState();
+        activeDeadGhosts++;
+        ApplyCurrentBackgroundMusic();
+
+        Coroutine routine = StartCoroutine(GhostRespawnRoutine(ghost));
+        ghostRespawnCoroutines[ghost] = routine;
+    }
+
     private void ActivatePowerMode()
     {
         RefreshGhostControllers();
@@ -218,10 +247,7 @@ public class GameManager : MonoBehaviour
 
         SetGhostsStateExceptDead(GhostState.Scared);
 
-        if (audioPlayer != null)
-        {
-            audioPlayer.PlayScaredLoop();
-        }
+        ApplyCurrentBackgroundMusic();
 
         if (hudController != null)
         {
@@ -264,10 +290,7 @@ public class GameManager : MonoBehaviour
             hudController.SetGhostTimerActive(false);
         }
 
-        if (audioPlayer != null)
-        {
-            audioPlayer.PlayNormalLoop();
-        }
+        ApplyCurrentBackgroundMusic();
     }
 
     private void CancelPowerModeIfActive()
@@ -282,6 +305,37 @@ public class GameManager : MonoBehaviour
         {
             EndPowerMode();
         }
+    }
+
+    private IEnumerator GhostRespawnRoutine(GhostController ghost)
+    {
+        float delay = Mathf.Max(0f, ghostRespawnDelaySeconds);
+        if (delay > 0f)
+        {
+            yield return new WaitForSeconds(delay);
+        }
+
+        if (ghost != null)
+        {
+            GhostState returnState = DetermineGhostReturnState();
+            ghost.RespawnToState(returnState);
+        }
+
+        if (ghost != null)
+        {
+            ghostRespawnCoroutines.Remove(ghost);
+        }
+
+        activeDeadGhosts = Mathf.Max(0, activeDeadGhosts - 1);
+        ApplyCurrentBackgroundMusic();
+    }
+
+    private GhostState DetermineGhostReturnState()
+    {
+        if (powerModeTimeRemaining <= 0f)
+            return GhostState.Normal;
+
+        return powerModeRecoverTriggered ? GhostState.Recovering : GhostState.Scared;
     }
 
     private void RefreshGhostControllers()
@@ -321,6 +375,16 @@ public class GameManager : MonoBehaviour
 
     private void ResetGhostsToSpawn()
     {
+        foreach (var kvp in new Dictionary<GhostController, Coroutine>(ghostRespawnCoroutines))
+        {
+            if (kvp.Value != null)
+            {
+                StopCoroutine(kvp.Value);
+            }
+        }
+        ghostRespawnCoroutines.Clear();
+        activeDeadGhosts = 0;
+
         RefreshGhostControllers();
 
         if (ghostControllers == null)
@@ -333,6 +397,8 @@ public class GameManager : MonoBehaviour
 
             ghost.ResetToSpawn();
         }
+
+        ApplyCurrentBackgroundMusic();
     }
 
     private IEnumerator PacStudentDeathRoutine()
@@ -386,9 +452,30 @@ public class GameManager : MonoBehaviour
 
     private void PlayNormalAudioIfNeeded()
     {
+        ApplyCurrentBackgroundMusic();
+    }
+
+    private void ApplyCurrentBackgroundMusic()
+    {
         if (audioPlayer == null)
             return;
 
-        audioPlayer.PlayNormalLoop();
+        if (powerModeTimeRemaining > 0f)
+        {
+            audioPlayer.PlayScaredLoop();
+        }
+        else
+        {
+            audioPlayer.PlayNormalLoop();
+        }
+
+        if (activeDeadGhosts > 0)
+        {
+            audioPlayer.PlayGhostEatenOverlay();
+        }
+        else
+        {
+            audioPlayer.StopGhostEatenOverlay();
+        }
     }
 }
