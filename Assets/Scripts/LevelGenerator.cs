@@ -389,7 +389,29 @@ public class LevelGenerator : MonoBehaviour
     {
         return remainingNormalPellets <= 0 && totalNormalPellets > 0;
     }
-        private bool IsWithinSpawnBounds(int col, int row)
+
+    public bool IsWallTile(int gridX, int gridY)
+    {
+        if (full == null) return true;
+
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return true;
+
+        int tileType = full[gridY, gridX];
+        return !(tileType == 0 || tileType == 5 || tileType == 6);
+    }
+
+    public bool IsOuterWallTile(int gridX, int gridY)
+    {
+        if (full == null) return false;
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+
+        int tileType = full[gridY, gridX];
+        return tileType == 1 || tileType == 2;
+    }
+
+    private bool IsWithinSpawnBounds(int col, int row)
     {
         if (full == null) return false;
 
@@ -405,7 +427,10 @@ public class LevelGenerator : MonoBehaviour
 
     public IReadOnlyCollection<Vector2Int> GetSpawnAreaTiles() => spawnAreaTiles;
 
-
+    public bool IsSpawnAreaTile(int gridX, int gridY)
+    {
+        return spawnAreaTiles.Contains(new Vector2Int(gridX, gridY));
+    }
 }
 
 public enum GhostSpawnGateType

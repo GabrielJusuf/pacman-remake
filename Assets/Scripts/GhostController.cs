@@ -212,6 +212,12 @@ public class GhostController : MonoBehaviour
         currentGridPosition = WorldToGridPosition(currentWorldPosition);
     }
 
+    public bool IsAtSpawnPosition(float tolerance = 0.05f)
+    {
+        float sqrTolerance = tolerance * tolerance;
+        return (transform.position - spawnPosition).sqrMagnitude <= sqrTolerance;
+    }
+
     private Vector2Int DetermineNextDirection()
     {
         List<Vector2Int> validDirections = GetValidDirections();
@@ -309,6 +315,10 @@ public class GhostController : MonoBehaviour
                     {
                         allow = false;
                     }
+                    else if (hasExitedSpawn && levelGenerator.IsSpawnAreaTile(next.x, next.y))
+                    {
+                        allow = false;
+                    }
                 }
             }
 
@@ -378,6 +388,12 @@ public class GhostController : MonoBehaviour
             ghostCollider.enabled = true;
         }
         hasExitedSpawn = false;
+        isMoving = false;
+        currentWorldPosition = spawnPosition;
+        targetWorldPosition = spawnPosition;
+        currentGridPosition = WorldToGridPosition(spawnPosition);
+        targetGridPosition = currentGridPosition;
+        lastMoveDirection = spawnGatePreference == GhostSpawnGateType.Top ? Vector2Int.up : Vector2Int.down;
     }
 
     public void EnterDeadState()
@@ -389,6 +405,11 @@ public class GhostController : MonoBehaviour
             ghostCollider.enabled = false;
         }
         hasExitedSpawn = false;
+        isMoving = false;
+        targetWorldPosition = transform.position;
+        currentWorldPosition = transform.position;
+        currentGridPosition = WorldToGridPosition(currentWorldPosition);
+        targetGridPosition = currentGridPosition;
     }
 
     public void RespawnToState(GhostState newState)
@@ -402,6 +423,12 @@ public class GhostController : MonoBehaviour
         SetFrozen(false);
         SetState(newState);
         hasExitedSpawn = false;
+        isMoving = false;
+        currentWorldPosition = spawnPosition;
+        targetWorldPosition = spawnPosition;
+        currentGridPosition = WorldToGridPosition(spawnPosition);
+        targetGridPosition = currentGridPosition;
+        lastMoveDirection = spawnGatePreference == GhostSpawnGateType.Top ? Vector2Int.up : Vector2Int.down;
     }
 
 
@@ -568,6 +595,18 @@ public class GhostController : MonoBehaviour
     }
 
 
+    private bool HasWallOnRight(Vector2Int dir)
+    {
+        if (levelGenerator == null)
+            return false;
+
+        Vector2Int next = currentGridPosition + dir;
+        Vector2Int right = new Vector2Int(dir.y, -dir.x);
+        Vector2Int rightTile = next + right;
+
+        return levelGenerator.IsWallTile(rightTile.x, rightTile.y);
+    }
+
     private Vector2Int SelectChaseDirection(List<Vector2Int> validDirections)
     {
         if (validDirections == null || validDirections.Count == 0)
@@ -611,21 +650,7 @@ public class GhostController : MonoBehaviour
         if (validDirections == null || validDirections.Count == 0)
             return lastMoveDirection;
 
-        Vector2Int rightTurn = new Vector2Int(lastMoveDirection.y, -lastMoveDirection.x);
-        Vector2Int straight = lastMoveDirection;
-        Vector2Int leftTurn = new Vector2Int(-lastMoveDirection.y, lastMoveDirection.x);
-        Vector2Int reverse = -lastMoveDirection;
-
-        Vector2Int[] priority = { rightTurn, straight, leftTurn, reverse };
-
-        foreach (var dir in priority)
-        {
-            if (validDirections.Contains(dir))
-            {
-                return dir;
-            }
-        }
-
+        // Placeholder: will replace with proper perimeter-following logic.
         return validDirections[Random.Range(0, validDirections.Count)];
     }
 

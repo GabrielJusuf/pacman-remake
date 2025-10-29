@@ -12934,7 +12934,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6359066621912219314, guid: d535f28152bb84e6a8d5856db4e81ff8, type: 3}
       propertyPath: movementSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6359066621912219314, guid: d535f28152bb84e6a8d5856db4e81ff8, type: 3}
       propertyPath: movementTrail
@@ -13362,6 +13362,10 @@ PrefabInstance:
       propertyPath: ghostCollider
       value: 
       objectReference: {fileID: 638019301}
+    - target: {fileID: 817387768779756202, guid: 212465422f2a046d99e8a9e9f382e42c, type: 3}
+      propertyPath: spawnGatePreference
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1451847620668138174, guid: 212465422f2a046d99e8a9e9f382e42c, type: 3}
       propertyPath: behaviourType
       value: 3
@@ -13444,7 +13448,7 @@ PrefabInstance:
       objectReference: {fileID: 925355218}
     - target: {fileID: 3878006338070654089, guid: 212465422f2a046d99e8a9e9f382e42c, type: 3}
       propertyPath: spawnGatePreference
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5985764053352312180, guid: 212465422f2a046d99e8a9e9f382e42c, type: 3}
       propertyPath: m_LocalPosition.x

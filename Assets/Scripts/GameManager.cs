@@ -499,8 +499,16 @@ public class GameManager : MonoBehaviour
 
         if (ghost != null)
         {
-            GhostState returnState = DetermineGhostReturnState();
-            ghost.RespawnToState(returnState);
+            while (ghost != null && !ghost.IsAtSpawnPosition())
+            {
+                yield return null;
+            }
+
+            if (ghost != null)
+            {
+                GhostState returnState = DetermineGhostReturnState();
+                ghost.RespawnToState(returnState);
+            }
         }
 
         if (ghost != null)
