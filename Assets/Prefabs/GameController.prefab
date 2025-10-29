@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8560453388517150677
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6116374426023837987}
+  - component: {fileID: 6920885810301592330}
+  - component: {fileID: 538428922343509461}
+  - component: {fileID: 3623027886985558235}
+  m_Layer: 0
+  m_Name: GameController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6116374426023837987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8560453388517150677}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6920885810301592330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8560453388517150677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f43ae9654e5645ee85cf7bd66f7735e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cherryPrefab: {fileID: 6588841090713447921, guid: 53971cf4aef674cbb87a9369317e48e2, type: 3}
+  levelDimensions: {x: 28, y: 29}
+  spawnOffset: 1
+  cherrySortingOrder: 100
+  spawnCooldown: 5
+  travelSpeed: 4
+--- !u!114 &538428922343509461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8560453388517150677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c07026e479ec418e8b97cc61b5e4b35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 0}
+  scoreText: {fileID: 0}
+  lifeIcons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  ghostTimerContainer: {fileID: 0}
+  ghostTimerText: {fileID: 0}
+  ghostTimerFormat: '{0:0.0}'
+--- !u!114 &3623027886985558235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8560453388517150677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6688fd65698c24722b109d4775b0692c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoStartTimer: 1
+  startTimeSeconds: 0
+  timerStartDelaySeconds: 4
+  hudController: {fileID: 538428922343509461}
+  pacStudent: {fileID: 0}
+  roundStartContainer: {fileID: 0}
+  roundStartText: {fileID: 0}
+  roundStartSequence:
+  - 3
+  - 2
+  - 1
+  - GO!
+  countdownStepDuration: 1
+  pelletScoreValue: 10
+  powerPelletScoreValue: 50
+  cherryScoreValue: 100
+  ghostEatenScoreValue: 300
+  powerPelletDurationSeconds: 10
+  powerPelletRecoverWarningSeconds: 3
+  audioPlayer: {fileID: 0}
+  startingLives: 3
+  pacDeathAnimationDuration: 3
+  ghostRespawnDelaySeconds: 3
+  gameOverContainer: {fileID: 0}
+  gameOverText: {fileID: 0}
+  gameOverDisplaySeconds: 3

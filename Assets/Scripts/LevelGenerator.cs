@@ -16,6 +16,12 @@ public class LevelGenerator : MonoBehaviour
     public GameObject ghostExit;        // 8
 
     private float tileSize = 1.0f;
+    private GameObject[,] spawnedTiles;
+    private int totalNormalPellets;
+    private int remainingNormalPellets;
+    private readonly List<Vector2Int> topSpawnGates = new List<Vector2Int>();
+    private readonly List<Vector2Int> bottomSpawnGates = new List<Vector2Int>();
+    private readonly HashSet<Vector2Int> spawnAreaTiles = new HashSet<Vector2Int>();
 
     // TO MARKER: Replace quad with another array for test case marking
     private int[,] quad = new int[,]
@@ -102,6 +108,13 @@ public class LevelGenerator : MonoBehaviour
         int rowSize = map.GetLength(0);
         int colSize = map.GetLength(1);
 
+        spawnedTiles = new GameObject[rowSize, colSize];
+        totalNormalPellets = 0;
+        remainingNormalPellets = 0;
+        topSpawnGates.Clear();
+        bottomSpawnGates.Clear();
+        spawnAreaTiles.Clear();
+
         for (int row = 0; row < rowSize; row++)
         {
             for (int col = 0; col < colSize; col++)
@@ -113,6 +126,26 @@ public class LevelGenerator : MonoBehaviour
                 Vector3 pos = GridToWorldCentered(col, row, colSize, rowSize);
                 var tile = Instantiate(prefab, pos, Quaternion.identity, parent);
                 tile.transform.rotation = FindRotation(id, map, row, col);
+                spawnedTiles[row, col] = tile;
+
+                if (id == 5)
+                {
+                    totalNormalPellets++;
+                    remainingNormalPellets++;
+                }
+                else if (id == 8)
+                {
+                    Vector2Int gate = new Vector2Int(col, row);
+                    ClassifySpawnGate(gate);
+                    spawnAreaTiles.Add(gate);
+                }
+                else if (id == 0)
+                {
+                    if (IsWithinSpawnBounds(col, row))
+                    {
+                        spawnAreaTiles.Add(new Vector2Int(col, row));
+                    }
+                }
             }
         }
     }
@@ -229,5 +262,180 @@ public class LevelGenerator : MonoBehaviour
         if (row < 0 || col < 0 || row >= map.GetLength(0) || col >= map.GetLength(1)) return 0;
         return map[row, col];
     }
+    
+    public bool IsWalkable(int gridX, int gridY)
+    {
+        if (full == null) return false;
+        
+        // Check bounds
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+        
+        int tileType = full[gridY, gridX];
+        
+        // Walkable tiles: empty (0), standardPellet (5), powerPellet (6)
+        // Non-walkable tiles: walls (1,2,3,4,7,8)
+        return tileType == 0 || tileType == 5 || tileType == 6;
+    }
+    
+    // Public method to check if a grid position has a pellet
+    public bool HasPellet(int gridX, int gridY)
+    {
+        if (full == null) return false;
+        
+        // Check bounds
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+        
+        int tileType = full[gridY, gridX];
+        
+        // Pellet tiles: standardPellet (5), powerPellet (6)
+        return tileType == 5 || tileType == 6;
+    }
 
+    public bool ConsumePellet(int gridX, int gridY, out bool wasPowerPellet)
+    {
+        wasPowerPellet = false;
+
+        if (full == null || spawnedTiles == null)
+            return false;
+
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+
+        int tileType = full[gridY, gridX];
+
+        if (tileType != 5 && tileType != 6)
+            return false;
+
+        wasPowerPellet = tileType == 6;
+
+        GameObject pelletTile = spawnedTiles[gridY, gridX];
+        Transform parent = null;
+        Vector3 position = Vector3.zero;
+        Quaternion rotation = Quaternion.identity;
+
+        if (pelletTile != null)
+        {
+            parent = pelletTile.transform.parent;
+            position = pelletTile.transform.position;
+            rotation = pelletTile.transform.rotation;
+            Destroy(pelletTile);
+            spawnedTiles[gridY, gridX] = null;
+        }
+
+        full[gridY, gridX] = 0;
+
+        if (tileType == 5)
+        {
+            remainingNormalPellets = Mathf.Max(0, remainingNormalPellets - 1);
+        }
+
+        if (empty != null && parent != null)
+        {
+            GameObject replacement = Instantiate(empty, position, rotation, parent);
+            spawnedTiles[gridY, gridX] = replacement;
+        }
+
+        return true;
+    }
+
+    private void ClassifySpawnGate(Vector2Int gridPosition)
+    {
+        if (full == null)
+            return;
+
+        int spawnCenterRow = (full != null) ? full.GetLength(0) / 2 : 0;
+
+        if (gridPosition.y <= spawnCenterRow)
+        {
+            topSpawnGates.Add(gridPosition);
+        }
+        else
+        {
+            bottomSpawnGates.Add(gridPosition);
+        }
+    }
+
+    public bool IsSpawnGate(Vector2Int gridPosition)
+    {
+        return topSpawnGates.Contains(gridPosition) || bottomSpawnGates.Contains(gridPosition);
+    }
+
+    public GhostSpawnGateType GetSpawnGateType(Vector2Int gridPosition)
+    {
+        if (topSpawnGates.Contains(gridPosition))
+            return GhostSpawnGateType.Top;
+        if (bottomSpawnGates.Contains(gridPosition))
+            return GhostSpawnGateType.Bottom;
+        return GhostSpawnGateType.None;
+    }
+
+    public IReadOnlyList<Vector2Int> GetTopSpawnGates() => topSpawnGates;
+
+    public IReadOnlyList<Vector2Int> GetBottomSpawnGates() => bottomSpawnGates;
+
+    public int GetTotalNormalPellets()
+    {
+        return totalNormalPellets;
+    }
+
+    public int GetRemainingNormalPellets()
+    {
+        return remainingNormalPellets;
+    }
+
+    public bool AreAllNormalPelletsCollected()
+    {
+        return remainingNormalPellets <= 0 && totalNormalPellets > 0;
+    }
+
+    public bool IsWallTile(int gridX, int gridY)
+    {
+        if (full == null) return true;
+
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return true;
+
+        int tileType = full[gridY, gridX];
+        return !(tileType == 0 || tileType == 5 || tileType == 6);
+    }
+
+    public bool IsOuterWallTile(int gridX, int gridY)
+    {
+        if (full == null) return false;
+        if (gridX < 0 || gridX >= full.GetLength(1) || gridY < 0 || gridY >= full.GetLength(0))
+            return false;
+
+        int tileType = full[gridY, gridX];
+        return tileType == 1 || tileType == 2;
+    }
+
+    private bool IsWithinSpawnBounds(int col, int row)
+    {
+        if (full == null) return false;
+
+        int height = full.GetLength(0);
+        int width = full.GetLength(1);
+        int centerX = width / 2;
+        int centerY = height / 2;
+
+        bool withinX = Mathf.Abs(col - centerX) <= 2;
+        bool withinY = row >= centerY - 2 && row <= centerY + 2;
+        return withinX && withinY;
+    }
+
+    public IReadOnlyCollection<Vector2Int> GetSpawnAreaTiles() => spawnAreaTiles;
+
+    public bool IsSpawnAreaTile(int gridX, int gridY)
+    {
+        return spawnAreaTiles.Contains(new Vector2Int(gridX, gridY));
+    }
+}
+
+public enum GhostSpawnGateType
+{
+    None,
+    Top,
+    Bottom
 }
