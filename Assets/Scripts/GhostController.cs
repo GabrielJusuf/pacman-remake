@@ -76,8 +76,8 @@ public class GhostController : MonoBehaviour
             defaultAnimatorSpeed = animator.speed;
         }
 
-        levelGenerator = FindObjectOfType<LevelGenerator>();
-        var pac = FindObjectOfType<PacStudentController>();
+        levelGenerator = FindFirstObjectByType<LevelGenerator>();
+        var pac = FindFirstObjectByType<PacStudentController>();
         if (pac != null)
         {
             pacStudentTransform = pac.transform;
@@ -436,7 +436,7 @@ public class GhostController : MonoBehaviour
     {
         if (pacStudentTransform == null)
         {
-            var pac = FindObjectOfType<PacStudentController>();
+            var pac = FindFirstObjectByType<PacStudentController>();
             if (pac != null)
             {
                 pacStudentTransform = pac.transform;

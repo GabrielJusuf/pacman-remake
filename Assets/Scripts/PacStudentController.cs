@@ -8,10 +8,6 @@ public class PacStudentController : MonoBehaviour
     public float tileSize = 1.0f;
     public float movementSpeed = 2.0f;
     
-    [Header("Grid Settings")]
-    public int gridWidth = 28;
-    public int gridHeight = 29;
-    
     [Header("Animation Settings")]
     public Animator animator;
     
@@ -33,6 +29,10 @@ public class PacStudentController : MonoBehaviour
     [Header("Death Settings")]
     [SerializeField] private string deathAnimationTrigger = "Die";
     [SerializeField] private ParticleSystem deathParticles;
+
+    [Header("Grid Settings")]
+    public int gridWidth = 28;
+    public int gridHeight = 29;
 
     private struct TeleporterMapping
     {
@@ -80,16 +80,16 @@ public class PacStudentController : MonoBehaviour
 
     void Start()
     {
-        tweener = FindObjectOfType<Tweener>();
+        tweener = FindFirstObjectByType<Tweener>();
         if (tweener == null)
         {
             GameObject tweenerObj = new GameObject("Tweener");
             tweener = tweenerObj.AddComponent<Tweener>();
         }
         
-        levelGenerator = FindObjectOfType<LevelGenerator>();
-        gameManager = FindObjectOfType<GameManager>();
-        cherryController = FindObjectOfType<CherryController>();
+        levelGenerator = FindFirstObjectByType<LevelGenerator>();
+        gameManager = FindFirstObjectByType<GameManager>();
+        cherryController = FindFirstObjectByType<CherryController>();
         
         // Initialise animator and audio source
         if (animator == null)

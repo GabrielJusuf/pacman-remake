@@ -59,21 +59,21 @@ public class GameManager : MonoBehaviour
     {
         if (hudController == null)
         {
-            hudController = FindObjectOfType<HUDController>();
+            hudController = FindFirstObjectByType<HUDController>();
         }
-        
+
         if (audioPlayer == null)
         {
-            audioPlayer = FindObjectOfType<AudioPlayer>();
+            audioPlayer = FindFirstObjectByType<AudioPlayer>();
         }
 
         if (pacStudent == null)
         {
-            pacStudent = FindObjectOfType<PacStudentController>();
+            pacStudent = FindFirstObjectByType<PacStudentController>();
         }
 
-        levelGenerator = FindObjectOfType<LevelGenerator>();
-        uiManager = FindObjectOfType<UIManager>();
+        levelGenerator = FindFirstObjectByType<LevelGenerator>();
+        uiManager = FindFirstObjectByType<UIManager>();
 
         if (roundStartContainer != null)
         {
@@ -530,7 +530,7 @@ public class GameManager : MonoBehaviour
 
     private void RefreshGhostControllers()
     {
-        ghostControllers = FindObjectsOfType<GhostController>();
+        ghostControllers = FindObjectsByType<GhostController>(FindObjectsSortMode.None);
     }
 
     private void SetGhostsStateExceptDead(GhostState targetState)
